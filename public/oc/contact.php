@@ -1,7 +1,4 @@
-<?php
-require_once('../config/variables.php');
-require_once('../config/fonctions.php');
-?>
+<?php session_start(); ?>
 
 <!DOCTYPE html>
 <html>
@@ -15,9 +12,9 @@ require_once('../config/fonctions.php');
 <body class="d-flex flex-column min-vh-100">
     <div class="container">
 
-        <?php require_once("../config/header.php"); ?>
+        <?php require_once(__DIR__ . '/header.php'); ?>
         <h1>Contactez nous</h1>
-        <form action="bonjour.php" method="POST" enctype="multipart/form-data">
+        <form action="submit_contact.php" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" aria-describedby="email-help">
@@ -35,6 +32,6 @@ require_once('../config/fonctions.php');
         </form>
     </div>
 
-    <?php require_once("../config/footer.php"); ?>
+    <?php require_once("footer.php"); ?>
 </body>
 </html>
