@@ -1,7 +1,13 @@
-<form method="POST" action="traitement_login.php">
-    Email: <input type="email" name="email"><br>
-    Password: <input type="password" name="password"><br>
-    <button type="submit">Login</button>
+<?php include '../includes/header.php'; ?>
+
+<h2>Connexion</h2>
+
+<form action="traitement_login.php" method="POST">
+<input type="email" name="email" placeholder="Email">
+<input type="password" name="password" placeholder="Mot de passe">
+<button type="submit">Se connecter</button>
+<a href="register.php">Créer un compte</a>
 </form>
 
-<a href="register.php">Créer un compte</a>
+<?php include '../includes/footer.php'; ?>
+
