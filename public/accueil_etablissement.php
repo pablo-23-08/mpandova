@@ -1,7 +1,46 @@
 <?php
-    require_once("../config/auth.php");
-    check_auth();
-    check_role("etablissement");
+require_once "../config/bootstrap.php";
+check_auth();
+check_role("etablissement");
+
+// Récupérer les infos de l'établissement
+$stmt = $pdo->prepare("SELECT * FROM etablissement WHERE id_user = ?");
+$stmt->execute([$_SESSION['id_user']]);
+$etablissement = $stmt->fetch();
+
+include '../app/views/layouts/header.php';
 ?>
-<h1>Bienvenue Etablissement</h1>
-<a href="logout.php">Logout</a>
+
+<main class="flex-1 max-w-6xl mx-auto w-full px-4 py-16">
+    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+        <h1 class="text-3xl font-bold text-white mb-2">
+            <?= htmlspecialchars($etablissement['nom']) ?> 🏫
+        </h1>
+        <p class="text-white/50 mb-8">
+            Type : <span class="text-[#f1b456] font-bold"><?= htmlspecialchars($etablissement['type']) ?></span>
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-4">
+            <div class="bg-white/10 border border-white/10 rounded-xl p-6">
+                <h3 class="font-bold text-white mb-1">📚 Mes filières</h3>
+                <p class="text-white/50 text-sm">Gérer vos formations</p>
+            </div>
+            <div class="bg-white/10 border border-white/10 rounded-xl p-6">
+                <h3 class="font-bold text-white mb-1">👥 Candidatures</h3>
+                <p class="text-white/50 text-sm">Consulter les demandes</p>
+            </div>
+            <div class="bg-white/10 border border-white/10 rounded-xl p-6">
+                <h3 class="font-bold text-white mb-1">⚙️ Mon profil</h3>
+                <p class="text-white/50 text-sm">Modifier les informations</p>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <a href="logout.php" class="text-red-400 hover:text-red-300 text-sm duration-300">
+                Se déconnecter
+            </a>
+        </div>
+    </div>
+</main>
+
+<?php include '../app/views/layouts/footer.php'; ?>

@@ -1,0 +1,17 @@
+# Tailwind CSS généré — toujours regénérer avec le CLI
+assets/css/output.css
+
+# Config locale sensible
+config/database.php
+
+# Logs PHP
+*.log
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
