@@ -237,35 +237,8 @@
   .mt-auto {
     margin-top: auto;
   }
-  .-mr-10 {
-    margin-right: calc(var(--spacing) * -10);
-  }
-  .mr-40 {
-    margin-right: calc(var(--spacing) * 40);
-  }
-  .mr-58 {
-    margin-right: calc(var(--spacing) * 58);
-  }
-  .mr-60 {
-    margin-right: calc(var(--spacing) * 60);
-  }
-  .mr-70 {
-    margin-right: calc(var(--spacing) * 70);
-  }
-  .mr-80 {
-    margin-right: calc(var(--spacing) * 80);
-  }
-  .mr-88 {
-    margin-right: calc(var(--spacing) * 88);
-  }
   .mr-90 {
     margin-right: calc(var(--spacing) * 90);
-  }
-  .mr-95 {
-    margin-right: calc(var(--spacing) * 95);
-  }
-  .mr-100 {
-    margin-right: calc(var(--spacing) * 100);
   }
   .mb-1 {
     margin-bottom: calc(var(--spacing) * 1);
@@ -285,29 +258,8 @@
   .mb-10 {
     margin-bottom: calc(var(--spacing) * 10);
   }
-  .ml-0 {
-    margin-left: calc(var(--spacing) * 0);
-  }
-  .ml-4 {
-    margin-left: calc(var(--spacing) * 4);
-  }
-  .ml-57 {
-    margin-left: calc(var(--spacing) * 57);
-  }
   .ml-57\.5 {
     margin-left: calc(var(--spacing) * 57.5);
-  }
-  .ml-58 {
-    margin-left: calc(var(--spacing) * 58);
-  }
-  .ml-60 {
-    margin-left: calc(var(--spacing) * 60);
-  }
-  .ml-80 {
-    margin-left: calc(var(--spacing) * 80);
-  }
-  .block {
-    display: block;
   }
   .flex {
     display: flex;
@@ -366,9 +318,6 @@
   .justify-center {
     justify-content: center;
   }
-  .gap-1 {
-    gap: calc(var(--spacing) * 1);
-  }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
@@ -424,9 +373,6 @@
   }
   .bg-\[\#071d3b\]\/70 {
     background-color: color-mix(in oklab, #071d3b 70%, transparent);
-  }
-  .bg-\[\#071d3b\]\/80 {
-    background-color: color-mix(in oklab, #071d3b 80%, transparent);
   }
   .bg-\[\#f1b456\] {
     background-color: #f1b456;
@@ -562,12 +508,6 @@
   .text-white {
     color: var(--color-white);
   }
-  .text-white\/40 {
-    color: color-mix(in srgb, #fff 40%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-white) 40%, transparent);
-    }
-  }
   .text-white\/50 {
     color: color-mix(in srgb, #fff 50%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -590,14 +530,6 @@
     color: color-mix(in srgb, #fff 90%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-white) 90%, transparent);
-    }
-  }
-  .placeholder-white\/30 {
-    &::placeholder {
-      color: color-mix(in srgb, #fff 30%, transparent);
-      @supports (color: color-mix(in lab, red, red)) {
-        color: color-mix(in oklab, var(--color-white) 30%, transparent);
-      }
     }
   }
   .shadow {

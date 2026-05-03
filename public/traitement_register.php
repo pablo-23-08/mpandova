@@ -28,6 +28,14 @@ if (strlen($password) < 8) {
     exit();
 }
 
+$password_confirm = $_POST['password_confirm'] ?? '';
+
+if ($password !== $password_confirm) {
+    set_flash('error', 'Les mots de passe ne correspondent pas.');
+    header("Location: register_$role.php");
+    exit();
+}
+
 // ─── Vérifier si l'email existe déjà ─────────────────────────────────────────
 
 $stmt = $pdo->prepare("SELECT id_user FROM user WHERE email = ?");
@@ -45,7 +53,7 @@ if ($role === 'etudiant') {
     $nom      = trim(htmlspecialchars($_POST['nom']    ?? ''));
     $prenom   = trim(htmlspecialchars($_POST['prenom'] ?? ''));
     $serie    = trim($_POST['serie_bac'] ?? '');
-    $series_valides = ['A', 'C', 'D', 'E', 'F', 'G'];
+    $series_valides = ['A', 'C', 'D', 'L', 'OSE', 'S'];
 
     if (empty($nom) || empty($prenom)) {
         set_flash('error', 'Nom et prénom sont obligatoires.');
