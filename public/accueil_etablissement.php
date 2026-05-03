@@ -1,5 +1,4 @@
 <?php
-    session_start();
     require_once("../config/auth.php");
     check_auth();
     check_role("etablissement");

@@ -1,6 +1,7 @@
 <?php 
 
-session_start();
+require_once "../config/auth.php";
+redirect_if_logged();
 
 require_once "../app/views/layouts/header.php";
 require_once "../app/views/home.php";

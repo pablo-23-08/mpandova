@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>mpandova</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../assets/css/output.css">
+        <link rel="icon" type="image/webp" href="../assets/img/logo.webp">
     </head>
 
     <body>
