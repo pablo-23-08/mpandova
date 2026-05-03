@@ -7,7 +7,7 @@
         <link rel="icon" type="image/webp" href="../assets/img/logo.webp">
     </head>
 
-    <body>
+    <body class="min-h-screen flex flex-col">
         <video src="../assets/video/video_loop.mp4" autoplay loop muted class="absolute -z-10 object-cover h-screen w-full"></video>
         
         <header class="bg-[#071d3b]/70 text-white/60 w-auto h-auto " >
