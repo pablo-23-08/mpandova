@@ -1,99 +1,101 @@
 <?php
-// Démarrage de session unique et sécurisé
-if (session_status() === PHP_SESSION_NONE) {
-    session_set_cookie_params([
-        'lifetime' => 0,
-        'path'     => '/',
-        'secure'   => false, // Mettre true en production (HTTPS)
-        'httponly' => true,
-        'samesite' => 'Strict',
-    ]);
-    session_start();
-}
-
-// ─── Authentification ────────────────────────────────────────────────────────
-
-/** Redirige vers l'accueil si non connecté */
-function check_auth(): void
-{
-    if (!isset($_SESSION['id_user'])) {
-        header("Location: index.php");
-        exit();
-    }
-}
-
-/** Redirige si le rôle ne correspond pas */
-function check_role(string $role): void
-{
-    check_auth();
-    if ($_SESSION['role'] !== $role) {
-        header("Location: index.php");
-        exit();
-    }
-}
-
-/** Redirige vers le dashboard si déjà connecté */
-function redirect_if_logged(): void
-{
-    if (!isset($_SESSION['id_user'])) {
-        return;
+    //demarrage de session unique et securise
+    if (session_status() === PHP_SESSION_NONE) {
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path'     => '/',
+            'secure'   => false, //mettre true en production (HTTPS)
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        session_start();
     }
 
-    $destinations = [
-        'etudiant'      => 'accueil_etudiant.php',
-        'etablissement' => 'accueil_etablissement.php',
-        'admin'         => 'accueil_admin.php',
-    ];
+    
+    //authentification
+    
+        //redirection vers l'accueil if not connected
+        function check_auth():void
+        {
+            if (!isset($_SESSION['id_user'])){
+                header("Location:index.php");
+                exit();
+            }
+        }
 
-    $role = $_SESSION['role'] ?? '';
-    $url  = $destinations[$role] ?? 'index.php';
+        //redirection if role is not same
+        function check_role(string $role):void
+        {
+            check_auth();
+            if ($_SESSION['role'] !== $role) {
+                header("Location:index.php");
+                exit();
+            }
+        }
 
-    header("Location: $url");
-    exit();
-}
+        //redirection vers accueil_*.php if already connected 
+        function redirect_if_logged():void
+        {
+            if (!isset($_SESSION['id_user'])) {
+                return;
+            }
+            
+            $destinations = [
+                'etudiant'      => 'accueil_etudiant.php',
+                'etablissement' => 'accueil_etablissement.php',
+            ];
 
-// ─── CSRF ────────────────────────────────────────────────────────────────────
+            $role = $_SESSION['role'] ?? '';
+            $url  = $destinations[$role] ?? 'index.php';
 
-/** Génère (ou récupère) le token CSRF de session */
-function csrf_token(): string
-{
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
+            header("Location:$url");
+            exit();
+        }
 
-/** Affiche le champ hidden CSRF à placer dans chaque <form> */
-function csrf_field(): void
-{
-    echo '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
-}
+    
+    //CSRF
 
-/** Vérifie le token CSRF — tue le script si invalide */
-function verify_csrf(): void
-{
-    $token = $_POST['csrf_token'] ?? '';
-    if (!hash_equals(csrf_token(), $token)) {
-        http_response_code(403);
-        die("Requête invalide (CSRF).");
-    }
-}
+        //generation ou recuperation de token CSRF de session
+        function csrf_token():string
+        {
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
+            return $_SESSION['csrf_token'];
+        }
 
-// ─── Messages flash ───────────────────────────────────────────────────────────
+        //affichage du champ hidden CSRF a mettre dans chaque <form>
+        function csrf_field():void
+        {
+            echo '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
+        }
 
-/** Enregistre un message flash en session */
-function set_flash(string $type, string $message): void
-{
-    $_SESSION['flash'] = ['type' => $type, 'message' => $message];
-}
+        //verfication du token CSRF - tue le script if invalid
+        function verify_csrf():void
+        {
+            $token = $_POST['csrf_token'] ?? '';
+            if (!hash_equals(csrf_token(), $token)) {
+                http_response_code(403);
+                die("Requête invalide (CSRF).");
+            }
+        }
 
-/** Récupère et supprime le message flash (retourne null si absent) */
-function get_flash(): ?array
-{
-    if (!isset($_SESSION['flash'])) {
-        return null;
-    }
-    $flash = $_SESSION['flash'];
-    unset($_SESSION['flash']);
-    return $flash;
-}
+
+    //messages flash
+
+        //enregistre un message flash en session
+        function set_flash(string $type, string $message):void
+        {
+            $_SESSION['flash'] = ['type' => $type, 'message' => $message];
+        }
+
+        //recuperation et suppression du message flash (retourne null si absent)
+        function get_flash():?array
+        {
+            if (!isset($_SESSION['flash'])) {
+                return null;
+            }
+            $flash = $_SESSION['flash'];
+            unset($_SESSION['flash']);
+            return $flash;
+        }

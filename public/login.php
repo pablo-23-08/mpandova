@@ -1,14 +1,16 @@
 <?php
-require_once "../config/bootstrap.php";
-redirect_if_logged();
-include '../app/views/layouts/header.php';
+    require_once "../config/bootstrap.php";
+    redirect_if_logged();
+    include '../app/views/layouts/header.php';
 ?>
 
 <main class="flex-1 flex items-center justify-center px-4 py-16">
     <div class="bg-[#071d3b]/50 backdrop-blur-md border border-black/20 rounded-2xl shadow-2xl p-8 w-full max-w-md">
 
         <a href="index.php" class="text-4xl text-white/70 hover:text-[#f1b456]">&lt; </a>
-        <h2 class="text-xl font-bold text-white text-center -mt-8 mb-10 ">Se connecter à Mpandova</h2>
+        <h2 class="text-xl font-bold text-white text-center -mt-8 mb-10 ">
+            Se connecter à Mpandova
+        </h2>
 
         <form action="traitement_login.php" method="POST" novalidate>
             <?php csrf_field(); ?>
@@ -63,7 +65,9 @@ include '../app/views/layouts/header.php';
 
         <p class="text-center text-white/50 text-sm mt-6">
             Pas encore de compte ?
-            <a href="register.php" class="text-[#f1b456] hover:underline font-medium">Créer un compte</a>
+            <a href="register.php" class="text-[#f1b456] hover:underline font-medium">
+                Créer un compte
+            </a>
         </p>
 
     </div>
