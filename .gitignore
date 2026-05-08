@@ -1,15 +1,15 @@
 # Tailwind CSS généré - toujours regénérer avec le CLI
-    assets/css/output.css
-    node_modules/
+assets/css/output.css
+node_modules/
 
 # Logs PHP
-    *.log
+*.log
 
 # Éditeurs
-    .vscode/
-    .idea/
-    *.swp
+.vscode/
+.idea/
+*.swp
 
 # OS
-    .DS_Store
-    Thumbs.db
+.DS_Store
+Thumbs.db

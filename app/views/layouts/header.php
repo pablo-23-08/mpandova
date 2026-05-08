@@ -10,10 +10,11 @@
 
     <body class="min-h-screen flex flex-col">
 
-        <img src="../assets/img/bg.jpg" alt="background_picture"
+        <img src="../assets/img/bg.webp" alt="background_picture"
             class="fixed top-0 left-0 w-full h-full object-cover -z-10"
             aria-hidden="true"
         />
+        <div class="fixed inset-0 bg-[url('../assets/img/bg.webp')] bg-cover bg-center -z-20"></div>
 
         <header class="bg-[#071d3b]/70 text-white/60 w-auto h-auto backdrop-blur-sm">
             <section class="max-w-6xl mx-auto flex justify-between items-center p-4">
