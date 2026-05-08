@@ -43,6 +43,7 @@
                     required
                     class="peer w-full border border-black/20 text-white rounded-lg px-4 pt-5 
                     pb-2 focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]"
+                    placeholder=""
                 >
                 <label
                     for="password"
@@ -57,7 +58,7 @@
             <button
                 type="submit"
                 class="w-full bg-[#f1b456] text-[#071d3b] font-bold py-3 rounded-lg 
-                hover:bg-[#f1b456]/80 duration-300 hover:translate-y-0.5 transition-transform"
+                hover:bg-[#f1b456]/80 duration-500 hover:translate-y-0.5 transition-transform"
             >
                 Se connecter
             </button>

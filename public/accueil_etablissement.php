@@ -40,7 +40,7 @@
             <a href="profil_etablissement.php" class="bg-[#071d3b]/50 border border-white/10 rounded-xl p-6
                     hover:border-[#f1b456] hover:bg-[#f1b456]/10 duration-300 group"
             >
-                <h3 class="font-bold text-white mb-1"><img src="../assets/img/setting.webp"/> Mon profil</h3>
+                <h3 class="font-bold text-white mb-1"><img src="../assets/img/setting.webp"/> Profil</h3>
                 <p class="text-white/50 text-sm">Modifier les informations</p>
             </a>
         </div>
