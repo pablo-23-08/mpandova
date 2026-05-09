@@ -14,7 +14,7 @@ cd mpandova
 2. Installer les dépendances
 
 ```bash
-npm install
+npm install tailwindcss @tailwindcss/cli
 ```
 
 3. Lancer Tailwind en mode développement
