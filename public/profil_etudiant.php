@@ -103,8 +103,6 @@
             <div class="grid md:grid-cols-3 gap-6 mb-8">
                 <!-- Serie bac -->
                 <div class="relative mb-5">
-                    <label for="serie_bac" class="absolute left-4 top-3 text-white/90 text-sm transition-all 
-                        peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1">Série</label>
                     <select
                         id="serie_bac" name="serie_bac" required
                         class="peer w-full border border-black/20 text-sm text-white rounded-lg px-4 pt-6 pb-2
@@ -117,6 +115,11 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <label for="serie_bac" class="absolute left-4 top-3 text-white/90 text-sm transition-all 
+                        peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1"
+                    >
+                        Série
+                    </label>
                 </div>
 
                 <!-- Annee d'obtention -->
@@ -220,4 +223,4 @@
     </div>
 </main>
 
-<?php include '../app/views/layouts/footer.php'; ?>
+<?php include "../app/views/layouts/footer.php"; ?>

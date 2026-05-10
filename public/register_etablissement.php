@@ -64,11 +64,12 @@ include '../app/views/layouts/header.php';
                     required
                     class="peer w-full border border-black/20 text-white rounded-lg px-4 pt-5 
                     pb-2 focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]"
-                    placeholder=""
+                    placeholder=" "
                 >
                 <label
                     for="email"
                     class="absolute left-4 top-3 text-white/90 text-sm transition-all 
+                    peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/70
                     peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1"
                 >
                     E-mail

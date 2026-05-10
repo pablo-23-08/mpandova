@@ -50,8 +50,6 @@
                 </div>
 
                 <div class="relative mb-5">
-                    <label for="type" class="absolute left-4 top-3 text-white/90 text-sm transition-all 
-                        peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1">Type</label>
                     <select
                         id="type" name="type" required
                         class="peer w-full border border-black/20 text-sm text-white rounded-lg px-4 pt-6 pb-2
@@ -66,12 +64,18 @@
                             'autre'          => 'Autre',
                         ];
                         foreach ($types as $val => $label): ?>
-                            <option value="<?= $val ?>" class="bg-[#071d3b]"
+                            <option value="<?= $val ?>" class="bg-[#071d3b]/50"
                                 <?= ($etablissement['type'] ?? '') === $val ? 'selected' : '' ?>>
                                 <?= $label ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <label for="type" class="absolute left-4 top-3 text-white/90 text-sm transition-all 
+                        peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1"
+                    >
+                        Type
+                    </label>
+                    
                 </div>
 
                 <div class="relative mb-5 md:col-span-2">

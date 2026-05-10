@@ -58,8 +58,6 @@ include '../app/views/layouts/header.php';
             </div>
 
             <div class="relative mb-5">
-                <label for="serie_bac" class="absolute left-4 top-3 text-white/90 text-sm transition-all 
-                    peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1">Série du baccalauréat</label>
                 <select
                     id="serie_bac" name="serie_bac" required
                     class="peer w-full border border-black/20 text-sm text-white rounded-lg px-4 pt-6 pb-2
@@ -73,6 +71,11 @@ include '../app/views/layouts/header.php';
                     <option value="OSE"class="bg-[#071d3b]/50">Série OSE </option>
                     <option value="S"class="bg-[#071d3b]/50">Série S </option>
                 </select>
+                <label for="serie_bac" class="absolute left-4 top-3 text-white/90 text-sm transition-all 
+                    peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1"
+                >
+                    Série du baccalauréat
+                </label>
             </div>
 
             <div class="relative mb-5">

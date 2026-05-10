@@ -39,7 +39,7 @@
                         </a>
                         <a
                             href="logout.php"
-                            class="bg-red-500/80 text-white px-4 py-2 rounded-lg hover:bg-red-600 font-bold duration-300"
+                            class="bg-[#f1b456] text-[#071d3b] px-4 py-2 rounded-lg hover:bg-[#f1b456]/75 font-bold duration-500 hover:translate-y-0.5 transition-transform"
                         >
                             Déconnexion
                         </a>
