@@ -2,11 +2,11 @@
     //demarrage de session unique et securise
     if (session_status() === PHP_SESSION_NONE) {
         session_set_cookie_params([
-            'lifetime' => 0,
-            'path'     => '/',
-            'secure'   => false, //mettre true en production (HTTPS)
-            'httponly' => true,
-            'samesite' => 'Strict',
+            'lifetime'=>0,
+            'path'    =>'/',
+            'secure'  =>false, //mettre true en production(HTTPS)
+            'httponly'=>true,
+            'samesite'=>'Strict',
         ]);
         session_start();
     }
@@ -40,13 +40,13 @@
                 return;
             }
             
-            $destinations = [
-                'etudiant'      => 'accueil_etudiant.php',
-                'etablissement' => 'accueil_etablissement.php',
+            $destinations=[
+                'etudiant'     =>'accueil_etudiant.php',
+                'etablissement'=>'accueil_etablissement.php',
             ];
 
-            $role = $_SESSION['role'] ?? '';
-            $url  = $destinations[$role] ?? 'index.php';
+            $role=$_SESSION['role'] ?? '';
+            $url =$destinations[$role] ?? 'index.php';
 
             header("Location:$url");
             exit();
@@ -59,7 +59,7 @@
         function csrf_token():string
         {
             if (empty($_SESSION['csrf_token'])) {
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                $_SESSION['csrf_token']=bin2hex(random_bytes(32));
             }
             return $_SESSION['csrf_token'];
         }
@@ -73,7 +73,7 @@
         //verfication du token CSRF - tue le script if invalid
         function verify_csrf():void
         {
-            $token = $_POST['csrf_token'] ?? '';
+            $token=$_POST['csrf_token'] ?? '';
             if (!hash_equals(csrf_token(), $token)) {
                 http_response_code(403);
                 die("Requête invalide (CSRF).");
@@ -86,7 +86,7 @@
         //enregistre un message flash en session
         function set_flash(string $type, string $message):void
         {
-            $_SESSION['flash'] = ['type' => $type, 'message' => $message];
+            $_SESSION['flash']=['type'=>$type, 'message'=>$message];
         }
 
         //recuperation et suppression du message flash (retourne null si absent)
@@ -95,7 +95,7 @@
             if (!isset($_SESSION['flash'])) {
                 return null;
             }
-            $flash = $_SESSION['flash'];
+            $flash=$_SESSION['flash'];
             unset($_SESSION['flash']);
             return $flash;
         }
