@@ -25,7 +25,7 @@
 
 //Creation de session 
 
-    //Regenerer l'ID de session pour prevenir la fixation de session
+    //Regenerer l'ID de session pour prevenir la fixation de session(hacker obtient une id_session d'un user connecté)
     session_regenerate_id(true);
 
     $_SESSION['id_user']=$user['id_user'];
