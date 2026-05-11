@@ -30,7 +30,6 @@
                             $dashboard = match($_SESSION['role']) {
                                 'etudiant'     =>'accueil_etudiant.php',
                                 'etablissement'=>'accueil_etablissement.php',
-                                'admin'        =>'accueil_admin.php',
                                 default        =>'index.php',
                             };
                         ?>
