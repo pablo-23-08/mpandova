@@ -13,7 +13,6 @@
 
     
     //authentification
-    
         //redirection vers l'accueil if not connected
         function check_auth():void
         {
@@ -54,7 +53,6 @@
 
     
     //CSRF
-
         //generation ou recuperation de token CSRF de session
         function csrf_token():string
         {
@@ -64,7 +62,7 @@
             return $_SESSION['csrf_token'];
         }
 
-        //affichage du champ hidden CSRF a mettre dans chaque <form>
+        //champ hidden CSRF a mettre dans chaque <form>
         function csrf_field():void
         {
             echo '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
@@ -82,7 +80,6 @@
 
 
     //messages flash
-
         //enregistre un message flash en session
         function set_flash(string $type, string $message):void
         {

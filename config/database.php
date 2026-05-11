@@ -15,5 +15,5 @@
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES,false);
     } catch (PDOException $e) {
         error_log("Erreur connexion BDD : " . $e->getMessage());
-        die("Une erreur est survenue. Veuillez réessayer plus tard.");
+        die("Erreur.");
     }
