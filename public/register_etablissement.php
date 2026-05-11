@@ -1,7 +1,7 @@
 <?php
-require_once "../config/bootstrap.php";
-redirect_if_logged();
-include '../app/views/layouts/header.php';
+    require_once "../config/bootstrap.php";
+    redirect_if_logged();
+    include '../app/views/layouts/header.php';
 ?>
 
 <main class="flex-1 flex items-center justify-center px-4 py-16">

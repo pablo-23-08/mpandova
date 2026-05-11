@@ -3,14 +3,14 @@
     check_auth();
     check_role("etablissement");
 
-    $stmt = $pdo->prepare("
+    $stmt=$pdo->prepare("
         SELECT e.*, l.ville, l.adresse
         FROM etablissement e
-        LEFT JOIN location l ON l.id_etablissement = e.id_etablissement
-        WHERE e.id_user = ?
+        LEFT JOIN location l ON l.id_etablissement=e.id_etablissement
+        WHERE e.id_user=?
     ");
     $stmt->execute([$_SESSION['id_user']]);
-    $etablissement = $stmt->fetch();
+    $etablissement=$stmt->fetch();
 
     include '../app/views/layouts/header.php';
 ?>
@@ -56,7 +56,7 @@
                             focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]"
                     >
                         <?php
-                        $types = [
+                        $types=[
                             'universite'     => 'Université publique',
                             'grande_ecole'   => 'Grande école',
                             'institut_prive' => 'Institut privé',

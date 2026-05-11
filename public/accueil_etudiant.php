@@ -12,9 +12,9 @@
     );
     $stmt->execute([$_SESSION['id_user']]);
     $etudiant = $stmt->fetch();
-
-    include '../app/views/layouts/header.php';
 ?>
+
+<?php include '../app/views/layouts/header.php';?>
 
 <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-16">
     <div class="bg-[#071d3b]/50 backdrop-blur-md border border-white/20 rounded-2xl p-8">

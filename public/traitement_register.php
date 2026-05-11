@@ -2,13 +2,13 @@
 require_once "../config/bootstrap.php";
 verify_csrf();
 
-// ─── Validation commune ───────────────────────────────────────────────────────
+//Validation commune 
 
-$role     = $_POST['role'] ?? '';
-$email    = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-$password = $_POST['password'] ?? '';
+$role    =$_POST['role'] ?? '';
+$email   =filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+$password=$_POST['password'] ?? '';
 
-$roles_valides = ['etudiant', 'etablissement'];
+$roles_valides=['etudiant', 'etablissement'];
 
 if (!in_array($role, $roles_valides, true)) {
     set_flash('error', 'Rôle invalide.');
@@ -28,7 +28,7 @@ if (strlen($password) < 8) {
     exit();
 }
 
-$password_confirm = $_POST['password_confirm'] ?? '';
+$password_confirm=$_POST['password_confirm'] ?? '';
 
 if ($password !== $password_confirm) {
     set_flash('error', 'Les mots de passe ne correspondent pas.');
@@ -36,9 +36,9 @@ if ($password !== $password_confirm) {
     exit();
 }
 
-// ─── Vérifier si l'email existe déjà ─────────────────────────────────────────
+//Verifier si l'email existe deja 
 
-$stmt = $pdo->prepare("SELECT id_user FROM user WHERE email = ?");
+$stmt=$pdo->prepare("SELECT id_user FROM user WHERE email=?");
 $stmt->execute([$email]);
 
 if ($stmt->fetch()) {
@@ -47,13 +47,13 @@ if ($stmt->fetch()) {
     exit();
 }
 
-// ─── Validation spécifique au rôle ───────────────────────────────────────────
+//Validation specifique au rôle 
 
 if ($role === 'etudiant') {
-    $nom      = trim(htmlspecialchars($_POST['nom']    ?? ''));
-    $prenom   = trim(htmlspecialchars($_POST['prenom'] ?? ''));
-    $serie    = trim($_POST['serie_bac'] ?? '');
-    $series_valides = ['A', 'C', 'D', 'L', 'OSE', 'S'];
+    $nom     =trim(htmlspecialchars($_POST['nom']    ?? ''));
+    $prenom  =trim(htmlspecialchars($_POST['prenom'] ?? ''));
+    $serie   =trim($_POST['serie_bac'] ?? '');
+    $series_valides=['A', 'C', 'D', 'L', 'OSE', 'S'];
 
     if (empty($nom) || empty($prenom)) {
         set_flash('error', 'Nom et prénom sont obligatoires.');
@@ -68,9 +68,9 @@ if ($role === 'etudiant') {
 }
 
 if ($role === 'etablissement') {
-    $nom   = trim(htmlspecialchars($_POST['nom']  ?? ''));
-    $type  = trim($_POST['type'] ?? '');
-    $types_valides = ['universite', 'grande_ecole', 'institut_prive', 'lycee_technique', 'autre'];
+    $nom  =trim(htmlspecialchars($_POST['nom']  ?? ''));
+    $type =trim($_POST['type'] ?? '');
+    $types_valides=['universite', 'grande_ecole', 'institut_prive', 'lycee_technique', 'autre'];
 
     if (empty($nom)) {
         set_flash('error', 'Le nom de l\'établissement est obligatoire.');
@@ -84,34 +84,34 @@ if ($role === 'etablissement') {
     }
 }
 
-// ─── Insertion en base ────────────────────────────────────────────────────────
+//Insertion en base 
 
 try {
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+    $password_hash=password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $pdo->prepare("INSERT INTO user(email, password, role) VALUES(?, ?, ?)");
+    $stmt=$pdo->prepare("INSERT INTO user(email, password, role) VALUES(?, ?, ?)");
     $stmt->execute([$email, $password_hash, $role]);
-    $id_user = $pdo->lastInsertId();
+    $id_user=$pdo->lastInsertId();
 
     if ($role === 'etudiant') {
-        $stmt = $pdo->prepare("INSERT INTO etudiant(nom, prenom, serie_bac, id_user) VALUES(?, ?, ?, ?)");
+        $stmt=$pdo->prepare("INSERT INTO etudiant(nom, prenom, serie_bac, id_user) VALUES(?, ?, ?, ?)");
         $stmt->execute([$nom, $prenom, $serie, $id_user]);
     }
 
     if ($role === 'etablissement') {
-        $stmt = $pdo->prepare("INSERT INTO etablissement(nom, type, id_user) VALUES(?, ?, ?)");
+        $stmt=$pdo->prepare("INSERT INTO etablissement(nom, type, id_user) VALUES(?, ?, ?)");
         $stmt->execute([$nom, $type, $id_user]);
     }
 
-    // ─── Création de session ──────────────────────────────────────────────────
+    //Creation de session 
 
     session_regenerate_id(true);
-    $_SESSION['id_user'] = $id_user;
-    $_SESSION['role']    = $role;
+    $_SESSION['id_user']=$id_user;
+    $_SESSION['role']   =$role;
 
     set_flash('success', 'Bienvenue sur Mpandova ! Votre compte a été créé.');
 
-    $destinations = [
+    $destinations=[
         'etudiant'      => 'accueil_etudiant.php',
         'etablissement' => 'accueil_etablissement.php',
     ];

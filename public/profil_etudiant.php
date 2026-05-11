@@ -3,16 +3,16 @@
     check_auth();
     check_role("etudiant");
 
-    // Récupérer les infos de l'étudiant
-    $stmt = $pdo->prepare("
+    //Recuperer les infos de l'etudiant
+    $stmt=$pdo->prepare("
         SELECT e.*, b.serie, b.moyenne, d.annee
         FROM etudiant e
-        LEFT JOIN diplome d ON d.id_etudiant = e.id_etudiant
-        LEFT JOIN bac b ON b.id_bac = d.id_bac
-        WHERE e.id_user = ?
+        LEFT JOIN diplome d ON d.id_etudiant=e.id_etudiant
+        LEFT JOIN bac b ON b.id_bac=d.id_bac
+        WHERE e.id_user=?
     ");
     $stmt->execute([$_SESSION['id_user']]);
-    $etudiant = $stmt->fetch();
+    $etudiant=$stmt->fetch();
 
     include '../app/views/layouts/header.php';
 ?>
