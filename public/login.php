@@ -13,8 +13,7 @@
         </h2>
 
         <form action="traitement_login.php" method="POST" novalidate>
-            <?php csrf_field(); ?>
-
+           
             <div class="relative mb-5">
                 <input
                     type="email"

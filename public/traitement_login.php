@@ -1,6 +1,5 @@
 <?php
     require_once "../config/bootstrap.php";
-    verify_csrf();
 
 //Validation 
     $email   =filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);

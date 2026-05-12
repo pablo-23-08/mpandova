@@ -1,6 +1,5 @@
 <?php
     require_once "../config/bootstrap.php";
-    verify_csrf();
 
     //Validation commune 
 

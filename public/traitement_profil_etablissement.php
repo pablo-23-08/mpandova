@@ -2,7 +2,6 @@
 require_once "../config/bootstrap.php";
 check_auth();
 check_role("etablissement");
-verify_csrf();
 
 //Recuperer l'etablissement 
 $stmt=$pdo->prepare("SELECT * FROM etablissement WHERE id_user=?");

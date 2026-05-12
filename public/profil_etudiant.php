@@ -26,7 +26,6 @@
         </div>
 
         <form method="POST" action="traitement_profil_etudiant.php" novalidate>
-            <?php csrf_field(); ?>
 
             <div class="grid md:grid-cols-2 gap-6 mb-6">
                 <!-- Nom -->

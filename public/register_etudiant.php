@@ -13,7 +13,7 @@
         <p class="text-white/50 text-sm text-center mb-8">Trouve ta voie des recommandations personnalisées.</p>
 
         <form method="POST" action="traitement_register.php" novalidate>
-            <?php csrf_field(); ?>
+           
             <input type="hidden" name="role" value="etudiant">
 
             <div class="relative grid grid-cols-2 gap-4 mb-5">

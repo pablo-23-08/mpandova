@@ -24,7 +24,6 @@
         </div>
 
         <form method="POST" action="traitement_profil_etablissement.php" novalidate>
-            <?php csrf_field(); ?>
 
             <h2 class="text-white font-bold mb-4">Informations générales</h2>
             <div class="grid md:grid-cols-2 gap-6 mb-6">

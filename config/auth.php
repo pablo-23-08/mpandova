@@ -6,7 +6,6 @@
             'path'    =>'/',
             'secure'  =>false, //mettre true en production(HTTPS)
             'httponly'=>true,
-            'samesite'=>'Strict',
         ]);
         session_start();
     }
@@ -49,33 +48,6 @@
 
             header("Location:$url");
             exit();
-        }
-
-    
-    //CSRF
-        //generation ou recuperation de token CSRF de session
-        function csrf_token():string
-        {
-            if (empty($_SESSION['csrf_token'])) {
-                $_SESSION['csrf_token']=bin2hex(random_bytes(32));
-            }
-            return $_SESSION['csrf_token'];
-        }
-
-        //champ hidden CSRF a mettre dans chaque <form>
-        function csrf_field():void
-        {
-            echo '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
-        }
-
-        //verfication du token CSRF - tue le script if invalid
-        function verify_csrf():void
-        {
-            $token=$_POST['csrf_token'] ?? '';
-            if (!hash_equals(csrf_token(), $token)) {
-                http_response_code(403);
-                die("Requête invalide (CSRF).");
-            }
         }
 
 

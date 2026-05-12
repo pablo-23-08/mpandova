@@ -2,7 +2,6 @@
 require_once "../config/bootstrap.php";
 check_auth();
 check_role("etudiant");
-verify_csrf();
 
 //Recuperer l'etudiant 
 $stmt=$pdo->prepare("SELECT * FROM etudiant WHERE id_user=?");

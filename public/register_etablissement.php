@@ -13,7 +13,7 @@
         <p class="text-white/50 text-sm text-center mb-8">Référencez votre école et publiez vos filières.</p>
 
         <form method="POST" action="traitement_register.php" novalidate>
-            <?php csrf_field(); ?>
+           
             <input type="hidden" name="role" value="etablissement">
 
             <div class=" relative mb-5">
