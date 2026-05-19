@@ -2,7 +2,7 @@
     $host    ="localhost";
     $dbname  ="mpandova";
     $user    ="root";
-    $password="";
+    $password="h";
 
     try {
         $pdo=new PDO(
