@@ -37,7 +37,7 @@
 
     //Verifier si l'email existe deja 
 
-    $stmt=$pdo->prepare("SELECT id_user FROM user WHERE email=?");
+    $stmt=$pdo->prepare("SELECT id_utilisateur FROM utilisateur WHERE email=?");
     $stmt->execute([$email]);
 
     if ($stmt->fetch()) {
@@ -69,7 +69,7 @@
     if ($role === 'etablissement') {
         $nom  =trim(htmlspecialchars($_POST['nom']  ?? ''));
         $type =trim($_POST['type'] ?? '');
-        $types_valides=['universite', 'grande_ecole', 'institut_prive', 'lycee_technique', 'autre'];
+        $types_valides=['universite_publique','universite_privee','grande_ecole','institut','autre'];
 
         if (empty($nom)) {
             set_flash('error', 'Le nom de l\'établissement est obligatoire.');
@@ -86,26 +86,26 @@
     //Insertion en base 
 
     try {
-        $password_hash=password_hash($password, PASSWORD_DEFAULT);
+        $mot_de_passe_hash=password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt=$pdo->prepare("INSERT INTO user(email, password, role) VALUES(?, ?, ?)");
-        $stmt->execute([$email, $password_hash, $role]);
-        $id_user=$pdo->lastInsertId();
+        $stmt=$pdo->prepare("INSERT INTO utilisateur(email, mot_de_passe_hash, role) VALUES(?, ?, ?)");
+        $stmt->execute([$email, $mot_de_passe_hash, $role]);
+        $id_utilisateur=$pdo->lastInsertId();
 
         if ($role === 'etudiant') {
-            $stmt=$pdo->prepare("INSERT INTO etudiant(nom, prenom, serie_bac, id_user) VALUES(?, ?, ?, ?)");
-            $stmt->execute([$nom, $prenom, $serie, $id_user]);
+            $stmt=$pdo->prepare("INSERT INTO etudiant(nom, prenom, serie_bac, id_utilisateur) VALUES(?, ?, ?, ?)");
+            $stmt->execute([$nom, $prenom, $serie, $id_utilisateur]);
         }
 
         if ($role === 'etablissement') {
-            $stmt=$pdo->prepare("INSERT INTO etablissement(nom, type, id_user) VALUES(?, ?, ?)");
-            $stmt->execute([$nom, $type, $id_user]);
+            $stmt=$pdo->prepare("INSERT INTO etablissement(nom, type, id_utilisateur) VALUES(?, ?, ?)");
+            $stmt->execute([$nom, $type, $id_utilisateur]);
         }
 
         //Creation de session 
 
         session_regenerate_id(true);
-        $_SESSION['id_user']=$id_user;
+        $_SESSION['id_utilisateur']=$id_utilisateur;
         $_SESSION['role']   =$role;
 
         set_flash('success', 'Bienvenue sur Mpandova ! Votre compte a été créé.');

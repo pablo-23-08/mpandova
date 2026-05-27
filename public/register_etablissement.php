@@ -43,9 +43,10 @@
                         focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]"
                 >
                     <option value="" disabled selected hidden >Choisir un type…</option>
-                    <option value="universite" class="bg-[#071d3b]/50">Université publique</option>
+                    <option value="universite_publique" class="bg-[#071d3b]/50">Université publique</option>
+                    <option value="universite_privee" class="bg-[#071d3b]/50">Université privée</option>
                     <option value="grande_ecole" class="bg-[#071d3b]/50">Grande école</option>
-                    <option value="institut_prive" class="bg-[#071d3b]/50">Institut privé</option>
+                    <option value="institut" class="bg-[#071d3b]/50">Institut</option>
                     <option value="autre" class="bg-[#071d3b]/50">Autre</option>
                 </select>
 

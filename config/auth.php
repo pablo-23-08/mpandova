@@ -15,7 +15,7 @@
         //redirection vers l'accueil if not connected
         function check_auth():void
         {
-            if (!isset($_SESSION['id_user'])){
+            if (!isset($_SESSION['id_utilisateur'])) {
                 header("Location:index.php");
                 exit();
             }
@@ -34,7 +34,7 @@
         //redirection vers accueil_*.php if already connected 
         function redirect_if_logged():void
         {
-            if (!isset($_SESSION['id_user'])) {
+            if (!isset($_SESSION['id_utilisateur'])) {
                 return;
             }
             

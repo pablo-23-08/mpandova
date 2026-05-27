@@ -12,11 +12,11 @@
     }
 
     //Authentification 
-    $stmt=$pdo->prepare("SELECT * FROM user WHERE email=?");
+    $stmt=$pdo->prepare("SELECT * FROM utilisateur WHERE email=?");
     $stmt->execute([$email]);
-    $user=$stmt->fetch();
+    $utilisateur=$stmt->fetch();
 
-    if (!$user||!password_verify($password, $user['password'])) {
+    if (!$utilisateur||!password_verify($password, $utilisateur['mot_de_passe_hash'])) {
         set_flash('error', 'Email ou mot de passe incorrect.');
         header("Location: login.php");
         exit();
@@ -24,11 +24,11 @@
 
 //Creation de session 
 
-    //Regenerer l'ID de session pour prevenir la fixation de session(hacker obtient une id_session d'un user connecté)
+    //Regenerer l'ID de session pour prevenir la fixation de session(hacker obtient une id_session d'un utilisateur connecté)
     session_regenerate_id(true);
 
-    $_SESSION['id_user']=$user['id_user'];
-    $_SESSION['role']   =$user['role'];
+    $_SESSION['id_utilisateur']=$utilisateur['id_utilisateur'];
+    $_SESSION['role']   =$utilisateur['role'];
 
     //Redirection selon le rôle 
     $destinations=[
@@ -36,6 +36,6 @@
         'etablissement'=>'accueil_etablissement.php',
     ];
 
-    $url=$destinations[$user['role']] ?? 'index.php';
+    $url=$destinations[$utilisateur['role']] ?? 'index.php';
     header("Location: $url");
     exit();
