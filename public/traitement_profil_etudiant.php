@@ -3,9 +3,28 @@ require_once "../config/bootstrap.php";
 check_auth();
 check_role("etudiant");
 
+function calculerMention(?float $moyenne): ?string {
+    if ($moyenne === null) {
+        return null;
+    }
+    if ($moyenne >= 16) {
+        return 'Très bien';
+    }
+    if ($moyenne >= 14) {
+        return 'Bien';
+    }
+    if ($moyenne >= 12) {
+        return 'Assez bien';
+    }
+    if ($moyenne >= 10) {
+        return 'Passable';
+    }
+    return null;
+}
+
 //Recuperer l'etudiant 
-$stmt=$pdo->prepare("SELECT * FROM etudiant WHERE id_user=?");
-$stmt->execute([$_SESSION['id_user']]);
+$stmt=$pdo->prepare("SELECT * FROM etudiant WHERE id_utilisateur=?");
+$stmt->execute([$_SESSION['id_utilisateur']]);
 $etudiant=$stmt->fetch();
 
 if (!$etudiant) {
@@ -20,7 +39,7 @@ $prenom=trim(htmlspecialchars($_POST['prenom'] ?? ''));
 $ddn   =$_POST['date_de_naissance'] ?? '';
 $serie =trim($_POST['serie_bac']  ?? '');
 $annee =(int) ($_POST['annee_bac']   ?? 0);
-$moyenne=(float) str_replace(',', '.', $_POST['moyenne_bac'] ?? 0);
+$moyenne_bac=(float) str_replace(',', '.', $_POST['moyenne_bac'] ?? 0);
 
 $series_valides=['A', 'C', 'D', 'L', 'OSE', 'S'];
 
@@ -62,36 +81,31 @@ if (!empty($password)) {
 try {
     // Mise a jour etudiant 
     $stmt=$pdo->prepare("
-        UPDATE etudiant SET nom=?, prenom=?, date_de_naissance=?, serie_bac=?
+        UPDATE etudiant SET nom=?, prenom=?, date_de_naissance=?
         WHERE id_etudiant=?
     ");
     $stmt->execute([
         $nom,
         $prenom,
         !empty($ddn) ? $ddn : null,
-        !empty($serie) ? $serie : $etudiant['serie_bac'],
         $etudiant['id_etudiant'],
     ]);
 
     // Mise a jour diplome + bac 
     if (!empty($serie) && !empty($annee)) {
         //Vérifier si un diplome/bac existe déja
-        $stmt=$pdo->prepare("SELECT d.id_diplome, d.id_bac FROM diplome d WHERE d.id_etudiant=?");
+        $stmt=$pdo->prepare("SELECT d.id_diplome, b.id_bac FROM diplome d LEFT JOIN bac b ON b.id_diplome=d.id_diplome WHERE d.id_etudiant=? LIMIT 1");
         $stmt->execute([$etudiant['id_etudiant']]);
         $diplome=$stmt->fetch();
+        $mention =calculerMention($moyenne_bac);
 
         if ($diplome) {
             //Mettre a jour le bac existant
-            $stmt=$pdo->prepare("UPDATE bac SET serie=?, annee=?, moyenne=? WHERE id_bac=?");
-            $stmt->execute([$serie, $annee, $moyenne > 0 ? $moyenne : null, $diplome['id_bac']]);
-        } else {
-            //Créer bac + diplome
-            $stmt=$pdo->prepare("INSERT INTO bac(serie, annee, moyenne) VALUES(?, ?, ?)");
-            $stmt->execute([$serie, $annee, $moyenne > 0 ? $moyenne : null]);
-            $id_bac=$pdo->lastInsertId();
-
-            $stmt=$pdo->prepare("INSERT INTO diplome(id_etudiant, id_bac, annee) VALUES(?, ?, ?)");
-            $stmt->execute([$etudiant['id_etudiant'], $id_bac, $annee]);
+            $stmt=$pdo->prepare("UPDATE diplome SET annee_obtention=? WHERE id_diplome=?");
+            $stmt->execute([$annee>0 ? $annee : null, $diplome['id_diplome']]);
+            
+            $stmt=$pdo->prepare("UPDATE bac SET serie=?, moyenne=?, mention=? WHERE id_bac=?");
+            $stmt->execute([$serie, $moyenne_bac, $mention, $diplome['id_bac']]);    
         }
     }
 

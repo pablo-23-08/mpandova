@@ -5,13 +5,13 @@
 
     //Recuperer les infos de l'etudiant
     $stmt=$pdo->prepare("
-        SELECT e.*, b.serie, b.moyenne, d.annee
+        SELECT e.*, d.annee_obtention, b.serie, b.moyenne, b.mention
         FROM etudiant e
         LEFT JOIN diplome d ON d.id_etudiant=e.id_etudiant
-        LEFT JOIN bac b ON b.id_bac=d.id_bac
-        WHERE e.id_user=?
+        LEFT JOIN bac b ON b.id_diplome=d.id_diplome
+        WHERE e.id_utilisateur=?
     ");
-    $stmt->execute([$_SESSION['id_user']]);
+    $stmt->execute([$_SESSION['id_utilisateur']]);
     $etudiant=$stmt->fetch();
 
     include '../app/views/layouts/header.php';
@@ -125,7 +125,7 @@
                 <div class="relative mb-5">
                     <input
                         min="2000" max="<?= date('Y') ?>"
-                        value="<?= htmlspecialchars($etudiant['annee'] ?? '') ?>"
+                        value="<?= htmlspecialchars($etudiant['annee_obtention'] ?? '') ?>"
                         type="number"
                         id="annee_bac"
                         name="annee_bac"

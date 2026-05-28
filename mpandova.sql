@@ -142,7 +142,7 @@ CREATE TABLE diplome (
     id_diplome INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
     nom VARCHAR(150) NOT NULL,
-    annee_obtention YEAR NOT NULL,
+    annee_obtention YEAR NULL,
 
     id_etudiant INT UNSIGNED NOT NULL,
 

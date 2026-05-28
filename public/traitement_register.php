@@ -84,7 +84,6 @@
     }
 
     //Insertion en base 
-
     try {
         $mot_de_passe_hash=password_hash($password, PASSWORD_DEFAULT);
 
@@ -93,8 +92,17 @@
         $id_utilisateur=$pdo->lastInsertId();
 
         if ($role === 'etudiant') {
-            $stmt=$pdo->prepare("INSERT INTO etudiant(nom, prenom, serie_bac, id_utilisateur) VALUES(?, ?, ?, ?)");
-            $stmt->execute([$nom, $prenom, $serie, $id_utilisateur]);
+            
+            $stmt=$pdo->prepare("INSERT INTO etudiant(nom, prenom, id_utilisateur) VALUES(?, ?, ?)");
+            $stmt->execute([$nom, $prenom, $id_utilisateur]);
+            $id_etudiant=$pdo->lastInsertId();
+            
+            $stmt = $pdo->prepare("INSERT INTO diplome(nom,annee_obtention,id_etudiant)VALUES (?, ?, ?)");
+            $stmt->execute(['Baccalauréat', null, $id_etudiant]);
+            $id_diplome = $pdo->lastInsertId();
+
+            $stmt = $pdo->prepare("INSERT INTO bac(serie,moyenne,mention,id_diplome)VALUES (?, ?, ?, ?)");
+            $stmt->execute([$serie, null, null, $id_diplome]);
         }
 
         if ($role === 'etablissement') {

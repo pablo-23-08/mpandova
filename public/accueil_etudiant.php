@@ -4,13 +4,31 @@
     check_role("etudiant");
 
     //recuperation des infos de l'etudiant
-    $stmt = $pdo->prepare("SELECT e.*, b.serie, b.moyenne, b.annee
+    $stmt = $pdo->prepare("
+        SELECT
+            e.*,
+            d.nom AS diplome,
+            d.annee_obtention,
+
+            b.serie,
+            b.moyenne,
+            b.mention
+
         FROM etudiant e
-        LEFT JOIN diplome d ON d.id_etudiant = e.id_etudiant
-        LEFT JOIN bac b ON b.id_bac = d.id_bac
-        WHERE e.id_user = ?"
-    );
-    $stmt->execute([$_SESSION['id_user']]);
+
+        LEFT JOIN diplome d
+            ON d.id_etudiant = e.id_etudiant
+
+        LEFT JOIN bac b
+            ON b.id_diplome = d.id_diplome
+
+        WHERE e.id_utilisateur = ?
+    ");
+
+    $stmt->execute([
+        $_SESSION['id_utilisateur']
+    ]);
+
     $etudiant = $stmt->fetch();
 ?>
 
@@ -26,7 +44,7 @@
             </h1>
             <p class="text-white/50 mb-8">Série bac : 
                 <span class="text-[#f1b456] font-bold">
-                    <?= htmlspecialchars($etudiant['serie_bac']) ?>
+                    <?= htmlspecialchars($etudiant['serie']) ?>
                 </span>
             </p>
         </div>
