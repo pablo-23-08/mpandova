@@ -70,199 +70,269 @@ Navigateur → public/index.php
 ---
 
 # Fichier 1 : `mpandova.sql`
-
+ 
 ## 1. Rôle du fichier
-
-Ce fichier est le **plan de la base de données**. Il définit toutes les tables (comme des feuilles Excel) qui vont stocker les données de l'application : utilisateurs, étudiants, établissements, filières, etc.
-
+ 
+Ce fichier est le **plan de la base de données**. Il définit toutes les tables qui vont stocker les données de l'application : utilisateurs, étudiants, établissements, filières, etc.
+ 
 ## 2. Vue d'ensemble
-
+ 
 Un fichier SQL contient des **instructions pour créer une base de données**. On l'exécute une seule fois pour préparer MySQL à recevoir des données.
-
+ 
 ## 3. Explication ligne par ligne
-
+ 
 ---
-
+ 
 **Ligne 1 :**
-
+ 
+```sql
+DROP DATABASE IF EXISTS mpandova;
+```
+ 
+- `DROP DATABASE` : supprime une base de données entière si elle existe déjà.
+- `IF EXISTS` : évite une erreur si la base n'existe pas encore.
+- Utile pendant le développement pour repartir de zéro sans erreur.
+---
+ 
+**Lignes 3-6 :**
+ 
 ```sql
 CREATE DATABASE IF NOT EXISTS mpandova
-```
-
-- `CREATE DATABASE` : crée une nouvelle base de données (un conteneur qui va regrouper toutes nos tables).
-- `IF NOT EXISTS` : si la base de données existe déjà, ne pas afficher d'erreur. Sans cette condition, MySQL retournerait une erreur si on relançait ce script.
-- `mpandova` : le nom de la base de données.
-
----
-
-**Lignes 2-3 :**
-
-```sql
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 ```
-
-- `CHARACTER SET utf8mb4` : définit l'encodage des caractères. `utf8mb4` supporte tous les caractères internationaux, y compris les emojis et les accents français (é, à, ù).
-- `COLLATE utf8mb4_unicode_ci` : définit comment comparer et trier les textes. `unicode_ci` signifie "case-insensitive" (insensible à la casse : "A" = "a").
-- Sans cet encodage, les accents comme "é" pourraient s'afficher comme des caractères bizarres.
-
+ 
+- `CREATE DATABASE` : crée une nouvelle base de données.
+- `IF NOT EXISTS` : ne pas afficher d'erreur si elle existe déjà.
+- `CHARACTER SET utf8mb4` : encodage qui supporte tous les caractères internationaux, emojis et accents français.
+- `COLLATE utf8mb4_unicode_ci` : définit la façon de comparer et trier les textes. `ci` = "case-insensitive" (insensible à la casse).
 ---
-
-**Ligne 5 :**
-
+ 
+**Ligne 8 :**
+ 
 ```sql
 USE mpandova;
 ```
-
-- Indique à MySQL que toutes les prochaines instructions concernent la base de données `mpandova`.
-- Sans cette ligne, MySQL ne saurait pas dans quelle base créer les tables.
-
+ 
+- Indique à MySQL que toutes les prochaines instructions concernent la base `mpandova`.
 ---
-
-**Lignes 7-13 :**
-
+ 
+**Lignes 10-17 — Table `utilisateur` :**
+ 
 ```sql
-CREATE TABLE user (
-    id_user   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    email     VARCHAR(100) NOT NULL UNIQUE,
-    password  VARCHAR(255) NOT NULL,
-    role      ENUM('etudiant', 'etablissement') NOT NULL
+CREATE TABLE utilisateur (
+    id_utilisateur INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    mot_de_passe_hash VARCHAR(255) NOT NULL,
+    role ENUM('etudiant', 'etablissement') NOT NULL
 );
 ```
-
-- `CREATE TABLE user` : crée une table appelée `user`. Une table est comme une feuille Excel avec des colonnes et des lignes.
-- `id_user INT UNSIGNED AUTO_INCREMENT PRIMARY KEY` :
-  - `id_user` : nom de la colonne
-  - `INT` : type "nombre entier"
-  - `UNSIGNED` : seulement les nombres positifs (0, 1, 2... pas -1, -2...)
-  - `AUTO_INCREMENT` : à chaque nouvel utilisateur, ce nombre augmente automatiquement (1, 2, 3...)
-  - `PRIMARY KEY` : identifiant unique de chaque ligne (comme un numéro de carte d'identité)
-- `email VARCHAR(100) NOT NULL UNIQUE` :
-  - `VARCHAR(100)` : texte de maximum 100 caractères
-  - `NOT NULL` : obligatoire (ne peut pas être vide)
-  - `UNIQUE` : deux utilisateurs ne peuvent pas avoir le même email
-- `password VARCHAR(255) NOT NULL` : mot de passe haché (255 caractères car les hash sont longs)
-- `role ENUM('etudiant', 'etablissement') NOT NULL` :
-  - `ENUM` : la valeur doit être l'une des options listées, pas autre chose
-  - Soit "etudiant", soit "etablissement" — rien d'autre n'est accepté
-
+ 
+- `CREATE TABLE utilisateur` : crée une table pour tous les comptes (étudiants et établissements).
+- `id_utilisateur INT UNSIGNED AUTO_INCREMENT PRIMARY KEY` : identifiant unique auto-incrémenté (1, 2, 3…).
+- `email VARCHAR(100) NOT NULL UNIQUE` : email obligatoire et unique — deux comptes ne peuvent pas partager le même email.
+- `mot_de_passe_hash VARCHAR(255) NOT NULL` : stocke le mot de passe **haché** (jamais en clair).
+- `role ENUM('etudiant', 'etablissement') NOT NULL` : le rôle ne peut être que l'une de ces deux valeurs.
+> ⚠️ **Important** : le champ s'appelle `mot_de_passe_hash` (et non `password`) et la table `utilisateur` (et non `user`). C'est une différence clé avec l'ancienne documentation.
+ 
 ---
-
-**Lignes 15-24 :**
-
+ 
+**Lignes 19-32 — Table `etudiant` :**
+ 
 ```sql
 CREATE TABLE etudiant (
-    id_etudiant       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nom               VARCHAR(100) NOT NULL,
-    prenom            VARCHAR(100) NOT NULL,
-    date_de_naissance DATE         DEFAULT NULL,
-    serie_bac         ENUM('A','C','D','L','OSE','S') NOT NULL,
-    id_user           INT UNSIGNED NOT NULL UNIQUE,
-    CONSTRAINT fk_etudiant_user FOREIGN KEY (id_user) REFERENCES user(id_user) ON DELETE CASCADE
+    id_etudiant INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prenom VARCHAR(100) NOT NULL,
+    date_de_naissance DATE DEFAULT NULL,
+    telephone VARCHAR(20) DEFAULT NULL,
+    id_utilisateur INT UNSIGNED NOT NULL UNIQUE,
+    CONSTRAINT fk_etudiant_utilisateur
+        FOREIGN KEY (id_utilisateur)
+        REFERENCES utilisateur(id_utilisateur)
+        ON DELETE CASCADE
 );
 ```
-
-- `date_de_naissance DATE DEFAULT NULL` : type `DATE` pour les dates (format YYYY-MM-DD). `DEFAULT NULL` signifie que le champ est optionnel.
-- `id_user INT UNSIGNED NOT NULL UNIQUE` : clé étrangère qui fait référence à la table `user`. `UNIQUE` signifie qu'un utilisateur ne peut être étudiant qu'une seule fois.
-- `CONSTRAINT fk_etudiant_user FOREIGN KEY (id_user) REFERENCES user(id_user) ON DELETE CASCADE` :
-  - `CONSTRAINT` : une règle qui s'applique à la table
-  - `FOREIGN KEY` : ce champ est une clé étrangère (il pointe vers une autre table)
-  - `REFERENCES user(id_user)` : il pointe vers la colonne `id_user` de la table `user`
-  - `ON DELETE CASCADE` : si on supprime un utilisateur, son profil étudiant est supprimé automatiquement
-
+ 
+- `telephone VARCHAR(20) DEFAULT NULL` : nouveau champ optionnel par rapport à la version précédente.
+- `id_utilisateur` : clé étrangère vers la table `utilisateur`. `UNIQUE` = un utilisateur ne peut être étudiant qu'une seule fois.
+- `ON DELETE CASCADE` : si l'utilisateur est supprimé, son profil étudiant l'est aussi automatiquement.
 ---
-
-**Lignes 26-34 :**
-
+ 
+**Lignes 34-50 — Table `etablissement` :**
+ 
 ```sql
 CREATE TABLE etablissement (
     id_etablissement INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nom              VARCHAR(100) NOT NULL,
-    type             ENUM('universite','grande_ecole','institut_prive','lycee_technique','autre') NOT NULL,
-    site_web         VARCHAR(100) DEFAULT NULL,
-    id_user          INT UNSIGNED NOT NULL UNIQUE,
-    CONSTRAINT fk_etablissement_user FOREIGN KEY (id_user) REFERENCES user(id_user) ON DELETE CASCADE
+    nom VARCHAR(150) NOT NULL,
+    type ENUM(
+        'universite_publique',
+        'universite_privee',
+        'grande_ecole',
+        'institut',
+        'autre'
+    ) NOT NULL,
+    site_web VARCHAR(255) DEFAULT NULL,
+    description TEXT DEFAULT NULL,
+    id_utilisateur INT UNSIGNED NOT NULL UNIQUE,
+    CONSTRAINT fk_etablissement_utilisateur
+        FOREIGN KEY (id_utilisateur)
+        REFERENCES utilisateur(id_utilisateur)
+        ON DELETE CASCADE
 );
 ```
-
-- Structure similaire à `etudiant`, mais pour les établissements.
-- `site_web VARCHAR(100) DEFAULT NULL` : optionnel, peut être vide.
-
+ 
+- Les types valides sont : `universite_publique`, `universite_privee`, `grande_ecole`, `institut`, `autre`.
+- `description TEXT` : champ texte long optionnel, nouveau par rapport à l'ancienne version.
+- `site_web VARCHAR(255)` : 255 caractères (au lieu de 100) pour les URLs longues.
 ---
-
-**Lignes 36-41 :**
-
+ 
+**Lignes 52-65 — Table `localisation` :**
+ 
 ```sql
-CREATE TABLE location (
-    id_etablissement INT UNSIGNED PRIMARY KEY,
-    ville            VARCHAR(100) DEFAULT NULL,
-    adresse          VARCHAR(100) DEFAULT NULL,
-    CONSTRAINT fk_location_etablissement FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement) ON DELETE CASCADE
+CREATE TABLE localisation (
+    id_localisation INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    ville VARCHAR(100) DEFAULT NULL,
+    adresse VARCHAR(255) DEFAULT NULL,
+    region VARCHAR(100) DEFAULT NULL,
+    id_etablissement INT UNSIGNED NOT NULL UNIQUE,
+    CONSTRAINT fk_localisation_etablissement
+        FOREIGN KEY (id_etablissement)
+        REFERENCES etablissement(id_etablissement)
+        ON DELETE CASCADE
 );
 ```
-
-- Cette table stocke la localisation géographique d'un établissement.
-- `id_etablissement INT UNSIGNED PRIMARY KEY` : ici la clé primaire EST la clé étrangère — un établissement ne peut avoir qu'une seule localisation.
-
+ 
+- Cette table remplace l'ancienne table `location`. Elle s'appelle maintenant `localisation`.
+- Ajout d'un champ `region` pour préciser la région géographique.
+- `id_localisation` est maintenant une clé primaire auto-incrémentée (différence avec l'ancienne version).
 ---
-
-**Lignes 43-49 :**
-
+ 
+**Lignes 67-72 — Table `filiere` :**
+ 
 ```sql
-CREATE TABLE bac (
-    id_bac  INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    serie   ENUM('A','C','D','L','OSE','S') NOT NULL,
-    annee   YEAR  NOT NULL,
-    moyenne FLOAT DEFAULT NULL
+CREATE TABLE filiere (
+    id_filiere INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    description TEXT DEFAULT NULL
 );
 ```
-
-- Stocke les informations du baccalauréat.
-- `YEAR` : type spécial pour stocker une année (ex: 2023).
-- `FLOAT` : nombre décimal (ex: 14.5).
-
+ 
+- Stocke les filières disponibles (ex: Informatique, Médecine, Droit…).
 ---
-
-**Lignes 51-58 :**
-
+ 
+**Lignes 74-78 — Table `debouche` :**
+ 
+```sql
+CREATE TABLE debouche (
+    id_debouche INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    description TEXT DEFAULT NULL
+);
+```
+ 
+- Stocke les débouchés professionnels (ex: Développeur, Médecin…).
+---
+ 
+**Lignes 80-96 — Table `mener` :**
+ 
+```sql
+CREATE TABLE mener (
+    id_filiere INT UNSIGNED NOT NULL,
+    id_debouche INT UNSIGNED NOT NULL,
+    niveau_etude VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id_filiere, id_debouche),
+    ...
+);
+```
+ 
+- Table de liaison entre `filiere` et `debouche` : une filière mène vers plusieurs débouchés.
+- `PRIMARY KEY (id_filiere, id_debouche)` : clé primaire composite — la combinaison des deux IDs est unique.
+---
+ 
+**Lignes 98-116 — Table `offre_filiere` :**
+ 
+```sql
+CREATE TABLE offre_filiere (
+    id_offre_filiere INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    frais_scolarite DECIMAL(10,2) DEFAULT 0,
+    place_disponible INT DEFAULT 0,
+    duree_formation VARCHAR(100) DEFAULT NULL,
+    id_etablissement INT UNSIGNED NOT NULL,
+    id_filiere INT UNSIGNED NOT NULL,
+    ...
+);
+```
+ 
+- **Nouvelle table** : représente une filière telle que proposée par un établissement spécifique, avec ses propres frais et conditions.
+- `DECIMAL(10,2)` : nombre décimal avec 10 chiffres au total et 2 après la virgule (ex: 1500000.00).
+---
+ 
+**Lignes 118-135 — Table `condition_acces` :**
+ 
+```sql
+CREATE TABLE condition_acces (
+    id_condition_acces INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    diplome_requis VARCHAR(150) DEFAULT NULL,
+    age_max INT DEFAULT NULL,
+    serie_bac ENUM('A','C','D','L','OSE','S') DEFAULT NULL,
+    annee_bac YEAR DEFAULT NULL,
+    moyenne_bac DECIMAL(4,2) DEFAULT NULL,
+    id_offre_filiere INT UNSIGNED NOT NULL UNIQUE,
+    ...
+);
+```
+ 
+- **Nouvelle table** : définit les conditions d'accès à une offre de filière.
+- Remplace l'ancienne table `condition_admission`.
+- `DECIMAL(4,2)` pour la moyenne (ex: 14.50).
+---
+ 
+**Lignes 137-149 — Table `diplome` :**
+ 
 ```sql
 CREATE TABLE diplome (
-    id_diplome  INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_diplome INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    annee_obtention YEAR NULL,
     id_etudiant INT UNSIGNED NOT NULL,
-    id_bac      INT UNSIGNED NOT NULL UNIQUE,
-    annee       YEAR NOT NULL,
-    CONSTRAINT fk_diplome_etudiant FOREIGN KEY (id_etudiant) REFERENCES etudiant(id_etudiant) ON DELETE CASCADE,
-    CONSTRAINT fk_diplome_bac      FOREIGN KEY (id_bac)      REFERENCES bac(id_bac)           ON DELETE CASCADE
+    ...
 );
 ```
-
-- Table de liaison entre `etudiant` et `bac`.
-- Un diplôme appartient à un étudiant ET correspond à un bac.
-- `id_bac UNIQUE` : un diplôme de bac ne peut être associé qu'à un seul étudiant.
-
+ 
+- Représente un diplôme obtenu par un étudiant.
+- `nom VARCHAR(150) NOT NULL` : le nom du diplôme (ex: "Baccalauréat").
 ---
-
-**Tables filiere, debouche, et les tables de liaison :**
-
+ 
+**Lignes 151-165 — Table `bac` :**
+ 
 ```sql
-CREATE TABLE filiere ( ... );
-CREATE TABLE condition_admission ( ... );
-CREATE TABLE debouche ( ... );
-CREATE TABLE mener ( ... );      -- filière → débouchés
-CREATE TABLE proposer ( ... );  -- établissement → filières
-CREATE TABLE consulter ( ... ); -- étudiant → filières consultées
-CREATE TABLE recommander ( ... ); -- recommandations personnalisées
+CREATE TABLE bac (
+    id_bac INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    serie ENUM('A','C','D','L','OSE','S') NOT NULL,
+    moyenne DECIMAL(4,2) DEFAULT NULL,
+    mention VARCHAR(50) DEFAULT NULL,
+    id_diplome INT UNSIGNED NOT NULL UNIQUE,
+    ...
+);
 ```
-
-Ces tables forment le cœur métier de l'application. Elles permettent de :
-
-- Lier des filières à des établissements (`proposer`)
-- Lier des filières à des débouchés professionnels (`mener`)
-- Suivre ce qu'un étudiant a consulté (`consulter`)
-- Stocker les recommandations (`recommander`)
-
+ 
+- Stocke les détails du baccalauréat d'un étudiant.
+- `mention VARCHAR(50)` : calculée automatiquement côté PHP selon la moyenne.
+- `id_diplome UNIQUE` : un bac correspond à exactement un diplôme.
 ---
-
+ 
+**Tables `recommandation` et `consulter` :**
+ 
+```sql
+CREATE TABLE recommandation ( ... );
+CREATE TABLE consulter ( ... );
+```
+ 
+- `recommandation` : stocke les recommandations personnalisées (score, justification) générées pour un étudiant.
+- `consulter` : trace les offres de filières consultées par un étudiant (avec horodatage).
+---
+ 
 # Fichier 2 : `config/database.php`
 
 ## 1. Rôle du fichier
