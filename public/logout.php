@@ -1,6 +1,10 @@
 <?php
     require_once "../config/bootstrap.php";
 
+    //Supprimer la session de la base mysql
+    $stmt = $pdo->prepare('DELETE FROM session WHERE id_session = :sid');
+    $stmt->execute([':sid' => session_id()]);
+
     //vider toutes les variables de session
     $_SESSION = [];
 

@@ -30,6 +30,15 @@
     $_SESSION['id_utilisateur']=$utilisateur['id_utilisateur'];
     $_SESSION['role']   =$utilisateur['role'];
 
+    // stocker aussi dans MySQL
+    $stmt = $pdo->prepare('REPLACE INTO session (id_session, id_utilisateur, role, initial) VALUES (:sid, :uid, :role, :time)');
+    $stmt->execute([
+        ':sid' => session_id(),
+        ':uid' => $utilisateur['id_utilisateur'],
+        ':role' => $utilisateur['role'],
+        ':time' => time(),
+    ]);
+
     //Redirection selon le rôle 
     $destinations=[
         'etudiant'     =>'accueil_etudiant.php',

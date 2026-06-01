@@ -19,9 +19,23 @@
                 header("Location:index.php");
                 exit();
             }
+
+            global $pdo;
+            $stmt = $pdo->prepare('SELECT * FROM session WHERE id_utilisateur = :sid');
+            $stmt->execute([':sid' => session_id()]);
+            $sessionRow = $stmt->fetch();
+
+            if (!$sessionRow || $sessionRow['id_utilisateur'] !== $_SESSION['id_utilisateur']) {
+                header('Location: index.php');
+                exit();
+            }
+
+            // mettre à jour la date d'activité
+            $stmt = $pdo->prepare('UPDATE session SET initial = :time WHERE id_utilisateur = :sid');
+            $stmt->execute([':time' => time(), ':sid' => session_id()]);
         }
 
-        //redirection if role is not same
+        //redirection if role is not the same
         function check_role(string $role):void
         {
             check_auth();

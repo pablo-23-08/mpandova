@@ -6,6 +6,12 @@ COLLATE utf8mb4_unicode_ci;
 
 USE mpandova;
 
+CREATE TABLE session ( 
+    id_session VARCHAR(128) PRIMARY KEY,
+    id_utilisateur INT UNSIGNED NOT NULL, 
+    role ENUM('etudiant', 'etablissement') NOT NULL, 
+    initial INT UNSIGNED NOT NULL );
+
 CREATE TABLE utilisateur (
     id_utilisateur INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,

@@ -1,7 +1,7 @@
 # Tailwind CSS généré - toujours regénérer avec le CLI
 /assets/css/output.css
 /node_modules/
-
+/docs
 # Logs PHP
 *.log
 
