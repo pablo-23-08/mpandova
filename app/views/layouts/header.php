@@ -25,7 +25,7 @@
                 </a>
 
                 <nav class="flex items-center gap-4">
-                    <?php if (isset($_SESSION['id_user'])): ?>
+                    <?php if (isset($_SESSION['id_utilisateur'])): ?>
                         <?php
                             $dashboard = match($_SESSION['role']) {
                                 'etudiant'     =>'accueil_etudiant.php',
