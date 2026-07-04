@@ -7,7 +7,7 @@
 
         <!-- En-tête : photo + nom + série bac -->
         <div class="flex flex-col items-center">
-            <img src="../assets/img/student.webp" alt="étudiant"/>
+            <img src="../public/assets/img/student.webp" alt="étudiant"/>
             <h1 class="text-3xl font-bold text-white mb-2">
                 <!-- htmlspecialchars() protège contre les injections XSS -->
                 Bienvenue, <?= htmlspecialchars($etudiant['prenom'] . ' ' . $etudiant['nom']) ?>
@@ -27,7 +27,7 @@
                class="bg-[#071d3b]/50 border border-white/10 rounded-xl p-6
                       hover:border-[#f1b456] hover:bg-[#f1b456]/10 duration-300 group">
                 <h3 class="font-bold text-white mb-1">
-                    <img src="../assets/img/direction.webp" alt=""/> Recommandations
+                    <img src="../public/assets/img/direction.webp" alt=""/> Recommandations
                 </h3>
                 <p class="text-white/50 text-sm">Filières adaptées à ton profil</p>
             </a>
@@ -37,7 +37,7 @@
                class="bg-[#071d3b]/50 border border-white/10 rounded-xl p-6
                       hover:border-[#f1b456] hover:bg-[#f1b456]/10 duration-300 group">
                 <h3 class="font-bold text-white mb-1">
-                    <img src="../assets/img/school1.webp" alt=""/> Établissements
+                    <img src="../public/assets/img/school1.webp" alt=""/> Établissements
                 </h3>
                 <p class="text-white/50 text-sm">Explorer les écoles disponibles</p>
             </a>
@@ -47,7 +47,7 @@
                class="bg-[#071d3b]/50 border border-white/10 rounded-xl p-6
                       hover:border-[#f1b456] hover:bg-[#f1b456]/10 duration-300 group">
                 <h3 class="font-bold text-white mb-1">
-                    <img src="../assets/img/setting.webp" alt=""/> Mon profil
+                    <img src="../public/assets/img/setting.webp" alt=""/> Mon profil
                 </h3>
                 <p class="text-white/50 text-sm">Compléter mes informations</p>
             </a>

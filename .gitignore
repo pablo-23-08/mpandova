@@ -1,5 +1,5 @@
 # Tailwind CSS généré - toujours regénérer avec le CLI
-/assets/css/output.css
+/public/assets/css/output.css
 /node_modules/
 /docs
 # Logs PHP
@@ -15,3 +15,6 @@
 Thumbs.db
 documentation.md
 analyse_mcd_mpandova.pdf
+/public/googlea0b3e1f5c7d6e4.html
+/public/robots.txt
+/public/sitemap.xml

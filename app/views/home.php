@@ -21,9 +21,6 @@
                 </a>
             </div>
         </div>
-        <div>
-            <img src="../assets/img/logo.webp" class="w-64 mx-auto hidden md:block" alt="logo">
-        </div>
     </div>
 </section>
 

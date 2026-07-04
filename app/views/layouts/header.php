@@ -3,16 +3,22 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Mpandova est une application web d’orientation académique à Madagascar.">
+        <meta name="keywords" content="mpandova, madagascar, plateforme, service">
+
+        <meta name="google-site-verification" content="g-ohB8jFR5f-B-mW6SJFFeEVLVoJO5X4OFFI8F60wsU" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mpandova</title>
         <!-- Le CSS est dans assets/css/output.css, à la racine du projet -->
-        <link rel="stylesheet" href="../assets/css/output.css">
-        <link rel="icon" type="image/webp" href="../assets/img/logo.webp">
+        <link rel="stylesheet" href="../public/assets/css/output.css">
+        <link rel="icon" type="image/webp" href="../public/assets/img/logo.png">
     </head>
 
     <body class="min-h-screen flex flex-col">
 
         <!-- Image de fond fixe, derrière tout le contenu (-z-10) -->
-        <img src="../assets/img/bg.webp" alt=""
+        <img src="../public/assets/img/bg.webp" alt=""
             class="fixed top-0 left-0 w-full h-full object-cover -z-10"
             aria-hidden="true"
         />
@@ -22,7 +28,7 @@
 
                 <!-- Logo et nom du site -->
                 <a href="index.php" class="flex items-center gap-2 hover:opacity-80 duration-300">
-                    <img src="../assets/img/logo.webp" class="h-10" alt="logo Mpandova">
+                    <img src="../public/assets/img/logo.webp" class="h-10" alt="logo Mpandova">
                     <span class="font-bold text-xl text-white">Mpandova</span>
                 </a>
 
