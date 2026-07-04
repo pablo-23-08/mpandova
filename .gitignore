@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 # Tailwind CSS
+=======
+# Tailwind CSS généré - toujours regénérer avec le CLI
+/public/assets/css/output.css
+>>>>>>> 680f67e9609fecabd25b9ef923ff6d432c465405
 /node_modules/
 /docs
 # Logs PHP
