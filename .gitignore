@@ -1,0 +1,19 @@
+# Tailwind CSS
+/node_modules/
+/docs
+# Logs PHP
+*.log
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+documentation.md
+analyse_mcd_mpandova.pdf
+/public/googlea0b3e1f5c7d6e4.html
+/public/robots.txt
+/public/sitemap.xml
