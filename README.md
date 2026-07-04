@@ -20,15 +20,11 @@ npm install tailwindcss @tailwindcss/cli
 3. Lancer Tailwind en mode développement
 
 ```bash
-npx @tailwindcss/cli --input assets/css/input.css --output assets/css/output.css
+npx @tailwindcss/cli --input public/assets/css/input.css --output public/assets/css/output.css
 ```
 
 4. installer la base de donnée mpandova.sql
-
-
 5. Modifier les infos de connexions à la bdd dans config/database.php
-
-
 6. Lancer le serveur PHP
 
 ```bash
