@@ -29,7 +29,6 @@
                         ];
                         foreach ($types as $val => $label):
                     ?>
-<<<<<<< HEAD
                         <option value="<?= $val ?>"><?= $label ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -63,70 +62,3 @@
         </p>
     </section>
 </main>
-=======
-                        <option value="<?= $val ?>" class="bg-[#071d3b]/50"><?= $label ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <label for="type"
-                    class="absolute left-4 top-3 text-white/90 text-sm peer-focus:text-[#f1b456] -mt-1">
-                    Type d'établissement
-                </label>
-            </div>
-
-            <!-- Email, mot de passe, confirmation (identique à register_etudiant) -->
-            <div class="relative mb-5">
-                <input type="email" id="email" name="email" required
-                    class="peer w-full border border-black/20 text-white rounded-lg px-4 pt-5 pb-2
-                    focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]"
-                    placeholder=" ">
-                <label for="email"
-                    class="absolute left-4 top-3 text-white/90 text-sm transition-all
-                    peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/70
-                    peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1">
-                    E-mail
-                </label>
-            </div>
-
-            <div class="relative mb-5">
-                <input type="password" id="password" name="password" required
-                    class="peer w-full border border-black/20 text-white rounded-lg px-4 pt-5 pb-2
-                    focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]"
-                    placeholder=" ">
-                <label for="password"
-                    class="absolute left-4 top-3 text-white/90 text-sm transition-all
-                    peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/70
-                    peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1">
-                    Mot de passe
-                </label>
-            </div>
-
-            <div class="relative mb-8">
-                <input type="password" id="password_confirm" name="password_confirm" required
-                    class="peer w-full border border-black/20 text-white rounded-lg px-4 pt-5 pb-2
-                    focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]"
-                    placeholder=" ">
-                <label for="password_confirm"
-                    class="absolute left-4 top-3 text-white/90 text-sm transition-all
-                    peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/70
-                    peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#f1b456] -mt-1">
-                    Confirmer le mot de passe
-                </label>
-            </div>
-
-            <button type="submit"
-                class="w-full bg-[#f1b456] text-[#071d3b] font-bold py-3 rounded-lg
-                hover:bg-[#f1b456]/80 duration-300 hover:translate-y-0.5 transition-transform">
-                Inscrire l'établissement
-            </button>
-        </form>
-
-        <p class="text-center text-white/50 text-sm mt-6">
-            Déjà inscrit ?
-            <a href="index.php?route=auth/login" class="text-[#f1b456] hover:underline font-medium">
-                Se connecter
-            </a>
-        </p>
-
-    </div>
-</main>
->>>>>>> 680f67e9609fecabd25b9ef923ff6d432c465405

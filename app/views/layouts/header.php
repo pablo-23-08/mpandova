@@ -11,8 +11,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mpandova</title>
         <!-- Le CSS est dans assets/css/output.css, à la racine du projet -->
-        <link rel="stylesheet" href="../public/assets/css/output.css">
-        <link rel="icon" type="image/webp" href="../public/assets/img/logo.webp">
+        <link rel="stylesheet" href="assets/css/output.css">
+        <link rel="icon" type="image/webp" href="assets/img/logo.webp">
     </head>
 <body class="min-h-screen flex flex-col bg-slate-50 text-slate-900">
 
