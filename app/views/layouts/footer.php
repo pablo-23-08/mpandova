@@ -3,7 +3,7 @@
             <div class="max-w-6xl mx-auto p-6 text-center text-sm">
                 <!-- <?= date('Y') ?> affiche l'année courante dynamiquement -->
                 <!-- Correction du bug original : <?php date('Y') ?> n'affichait rien -->
-                <p>© <?= date('Y') ?> Mpandova — Orientation académique à Madagascar</p>
+                <p>© <?= date('Y') ?> Mpandova | Orientation académique à Madagascar</p>
             </div>
         </footer>
 
