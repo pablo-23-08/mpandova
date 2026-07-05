@@ -8,6 +8,9 @@ require_once __DIR__ . "/../models/Etudiant.php";
 require_once __DIR__ . "/../models/Diplome.php";
 require_once __DIR__ . "/../models/Utilisateur.php";
 
+require_once __DIR__ . "/../models/Candidature.php";
+require_once __DIR__ . "/../models/Filiere.php";
+
 class EtudiantController
 {
     private PDO $pdo;
@@ -63,6 +66,171 @@ class EtudiantController
         $this->render('layouts/header');
         $this->render('etudiant/profil', ['etudiant' => $etudiant]);
         $this->render('layouts/footer');
+    }
+
+    // ─────────────────────────────────────────────
+    // Catalogue des établissements
+    // ─────────────────────────────────────────────
+
+    /**
+     * Affiche toutes les offres de filières disponibles.
+     * Supporte la recherche textuelle via GET.
+     */
+    public function etablissements(): void
+    {
+        check_role('etudiant');
+
+        // Récupérer la recherche dans l'URL : ?route=etudiant/etablissements&q=info
+        // filter_input sécurise la lecture du paramètre GET
+        $recherche = trim(filter_input(INPUT_GET, 'q', FILTER_SANITIZE_SPECIAL_CHARS) ?? '');
+
+        $filiereModel = new Filiere($this->pdo);
+        $offres       = $filiereModel->toutesLesOffres(!empty($recherche) ? $recherche : null);
+
+        $this->render('layouts/header');
+        $this->render('etudiant/etablissements', [
+            'offres'    => $offres,
+            'recherche' => $recherche,
+        ]);
+        $this->render('layouts/footer');
+    }
+
+    // ─────────────────────────────────────────────
+    // Recommandations personnalisées
+    // ─────────────────────────────────────────────
+
+    /**
+     * GET  → affiche les recommandations existantes (ou message si aucune)
+     * POST → (re)calcule les recommandations puis redirige en GET
+     */
+    public function recommandations(): void
+    {
+        check_role('etudiant');
+
+        $filiereModel = new Filiere($this->pdo);
+        $etudiant     = $this->etudiantModel->findByIdUtilisateur($_SESSION['id_utilisateur']);
+
+        // Mode POST : l'utilisateur a cliqué sur "Générer mes recommandations"
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Calcul et sauvegarde des recommandations en base
+            $filiereModel->calculerEtSauvegarderRecommandations(
+                $etudiant['id_etudiant'],
+                $etudiant
+            );
+            set_flash('success', 'Recommandations générées avec succès.');
+            // Redirection POST → GET (pattern PRG) pour éviter le re-submit au refresh
+            header("Location: index.php?route=etudiant/recommandations");
+            exit();
+        }
+
+        // Mode GET : récupérer les recommandations sauvegardées
+        $recommandations = $filiereModel->recommandationsParEtudiant($etudiant['id_etudiant']);
+
+        $this->render('layouts/header');
+        $this->render('etudiant/recommandations', [
+            'etudiant'        => $etudiant,
+            'recommandations' => $recommandations,
+        ]);
+        $this->render('layouts/footer');
+    }
+
+    // ─────────────────────────────────────────────
+    // Candidatures de l'étudiant
+    // ─────────────────────────────────────────────
+
+    /**
+     * Affiche la liste des candidatures de l'étudiant connecté.
+     */
+    public function candidatures(): void
+    {
+        check_role('etudiant');
+        $etudiant         = $this->etudiantModel->findByIdUtilisateur($_SESSION['id_utilisateur']);
+        $candidatureModel = new Candidature($this->pdo);
+        $candidatures     = $candidatureModel->parEtudiant($etudiant['id_etudiant']);
+
+        $this->render('layouts/header');
+        $this->render('etudiant/candidatures', ['candidatures' => $candidatures]);
+        $this->render('layouts/footer');
+    }
+
+    /**
+     * Traite la soumission d'une candidature (POST uniquement).
+     * Redirige vers la liste des candidatures après soumission.
+     */
+    public function soumettreCandidature(): void
+    {
+        check_role('etudiant');
+
+        // Sécurité : cette route n'accepte que les requêtes POST
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: index.php?route=etudiant/etablissements");
+            exit();
+        }
+
+        $idOffre  = (int) ($_POST['id_offre_filiere'] ?? 0);
+        $etudiant = $this->etudiantModel->findByIdUtilisateur($_SESSION['id_utilisateur']);
+
+        if ($idOffre <= 0 || !$etudiant) {
+            set_flash('error', 'Requête invalide.');
+            header("Location: index.php?route=etudiant/etablissements");
+            exit();
+        }
+
+        $candidatureModel = new Candidature($this->pdo);
+
+        // Vérifier si l'étudiant a déjà postulé à cette offre
+        if ($candidatureModel->existeDeja($etudiant['id_etudiant'], $idOffre)) {
+            set_flash('error', 'Vous avez déjà postulé à cette formation.');
+            header("Location: index.php?route=etudiant/candidatures");
+            exit();
+        }
+
+        try {
+            $candidatureModel->soumettre($etudiant['id_etudiant'], $idOffre, null);
+            set_flash('success', 'Votre candidature a été envoyée avec succès !');
+        } catch (PDOException $e) {
+            error_log("Erreur soumission candidature : " . $e->getMessage());
+            set_flash('error', 'Une erreur est survenue. Veuillez réessayer.');
+        }
+
+        header("Location: index.php?route=etudiant/candidatures");
+        exit();
+    }
+
+    /**
+     * Annule une candidature 'en_attente' (POST uniquement).
+     */
+    public function annulerCandidature(): void
+    {
+        check_role('etudiant');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: index.php?route=etudiant/candidatures");
+            exit();
+        }
+
+        $idCandidature = (int) ($_POST['id_candidature'] ?? 0);
+        $etudiant      = $this->etudiantModel->findByIdUtilisateur($_SESSION['id_utilisateur']);
+
+        if ($idCandidature <= 0 || !$etudiant) {
+            set_flash('error', 'Requête invalide.');
+            header("Location: index.php?route=etudiant/candidatures");
+            exit();
+        }
+
+        $candidatureModel = new Candidature($this->pdo);
+        // annuler() retourne true si la mise à jour a eu lieu
+        $succes = $candidatureModel->annuler($idCandidature, $etudiant['id_etudiant']);
+
+        if ($succes) {
+            set_flash('success', 'Candidature annulée.');
+        } else {
+            // Peut arriver si la candidature a déjà été traitée entre-temps
+            set_flash('error', 'Impossible d\'annuler cette candidature (déjà traitée ou introuvable).');
+        }
+
+        header("Location: index.php?route=etudiant/candidatures");
+        exit();
     }
 
     /**
