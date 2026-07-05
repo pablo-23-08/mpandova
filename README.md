@@ -1,6 +1,10 @@
 # Mpandova
 
-Application web d’orientation académique
+Application web d'orientation académique
+
+## Déploiement
+
+Le site est actuellement déployé et accessible à : **https://mpandova.alwaysdata.net**
 
 ## Installation
 

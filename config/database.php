@@ -1,9 +1,14 @@
 <?php
 // Paramètres de connexion à la base de données MySQL
-$host     = "mysql-mpandova.alwaysdata.net";   // Adresse du serveur MySQL (ici, machine locale)
+$host     = "localhost";   // Adresse du serveur MySQL (ici, machine locale)
 $dbname   = "mpandova_db";    // Nom de la base de données
-$user     = "mpandova";        // Utilisateur MySQL (administrateur par défaut en dev)
-$password = "Mpandova.2026";            // Mot de passe vide en développement local
+$user     = "root";        // Utilisateur MySQL (administrateur par défaut en dev)
+$password = "";            // Mot de passe vide en développement local
+
+// $host     = "mysql-mpandova.alwaysdata.net";   // Adresse du serveur MySQL (ici, machine locale)
+// $dbname   = "mpandova_db";    // Nom de la base de données
+// $user     = "mpandova";        // Utilisateur MySQL (administrateur par défaut en dev)
+// $password = "Mpandova.2026";            // Mot de passe vide en développement local
 
 try {
     // Création de l'objet PDO : le "canal" de communication avec MySQL
