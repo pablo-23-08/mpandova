@@ -4,14 +4,14 @@
             <p class="inline-flex rounded-full bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Connexion</p>
             <h1 class="mt-4 text-3xl font-extrabold leading-tight text-[#071d3b] sm:text-4xl">Connecte-toi à ton espace Mpandova</h1>
             <p class="mt-4 text-slate-600">Accède à ton suivi d’orientation, à tes recommandations et à tes options d’établissement.</p>
-            <a href="index.php" class="mt-6 inline-flex text-sm font-semibold text-[#071d3b] hover:underline">Retour à l’accueil</a>
+            <a href="index.php" class="mt-6 inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">Revenir à l’accueil</a>
         </article>
 
         <article class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
             <form action="index.php?route=auth/login" method="POST" novalidate class="space-y-5">
                 <div>
                     <label for="email" class="mb-2 block text-sm font-semibold text-[#071d3b]">E-mail</label>
-                    <input type="email" id="email" name="email" required class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30" placeholder="vous@exemple.com">
+                    <input type="email" id="email" name="email" required class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30" placeholder="votre adresse e-mail">
                 </div>
 
                 <div>

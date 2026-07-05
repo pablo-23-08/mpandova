@@ -1,12 +1,17 @@
 <main class="mx-auto flex w-full max-w-6xl flex-1 items-center px-4 py-10 sm:px-6 lg:px-8">
     <section class="w-full rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
-        <div class="mb-8 flex items-start justify-between gap-4">
+        <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between mb-6">
             <div>
                 <p class="inline-flex rounded-full bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Inscription établissement</p>
                 <h1 class="mt-4 text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Créer un compte établissement</h1>
                 <p class="mt-2 text-sm text-slate-600">Référence ton école et prépare la gestion de tes filières.</p>
             </div>
-            <a href="index.php?route=auth/register" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
+
+            <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+                <a href="index.php?route=auth/register" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
+                    Retour
+                </a>
+            </div>
         </div>
 
         <form method="POST" action="index.php?route=auth/register-etablissement" novalidate class="grid gap-5 sm:grid-cols-2">
@@ -36,7 +41,7 @@
 
             <div class="sm:col-span-2">
                 <label for="email" class="mb-2 block text-sm font-semibold text-[#071d3b]">E-mail</label>
-                <input type="email" id="email" name="email" required class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30" placeholder="contact@etablissement.mg">
+                <input type="email" id="email" name="email" required class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30" placeholder="">
             </div>
 
             <div>

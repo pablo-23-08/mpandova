@@ -2,117 +2,103 @@
 // $offres    : toutes les offres (filtrées ou non)
 // $recherche : terme de recherche actuel (pour pré-remplir le champ)
 ?>
-<main class="flex-1 max-w-6xl mx-auto w-full px-4 py-16">
-    <div class="bg-[#071d3b]/50 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+<main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <section class="rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
+        <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Catalogue des filières</h1>
+                <p class="mt-1 text-sm text-slate-500">Listes des filières disponibles.</p>
+            </div>
 
-        <div class="flex items-center gap-4 mb-6">
-            <a href="index.php?route=etudiant/accueil"
-               class="text-white/70 hover:text-[#f1b456] duration-300 text-2xl">&lt;</a>
-            <h1 class="text-2xl font-bold text-white">Catalogue des filières</h1>
+            <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+                <a href="index.php?route=etudiant/accueil" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
+                    Retour
+                </a>
+            </div>
         </div>
 
-        <!-- Barre de recherche -->
-        <form method="GET" action="index.php" class="mb-8">
-            <!-- Conserver le paramètre de route dans l'URL lors de la soumission -->
+        <form method="GET" action="index.php" class="mt-6">
             <input type="hidden" name="route" value="etudiant/etablissements">
-            <div class="flex gap-3">
-                <input type="text" name="q"
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <input
+                    type="text"
+                    name="q"
                     value="<?= htmlspecialchars($recherche) ?>"
-                    placeholder="Rechercher une filière, un établissement, une ville…"
-                    class="flex-1 border border-black/20 text-white rounded-lg px-4 py-3
-                    focus:outline-none focus:border-[#f1b456] focus:ring-1 focus:ring-[#f1b456]
-                    placeholder:text-white/30">
-                <button type="submit"
-                    class="bg-[#f1b456] text-[#071d3b] font-bold px-6 py-3 rounded-lg
-                    hover:bg-[#f1b456]/80 duration-300">
+                    placeholder="Rechercher une filière, un établissement, une ville"
+                    class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm text-slate-700 outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30"
+                >
+                <button type="submit" class="rounded-lg bg-[#f1b456] px-6 py-3 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                     Rechercher
                 </button>
                 <?php if (!empty($recherche)): ?>
-                    <!-- Bouton pour effacer la recherche -->
-                    <a href="index.php?route=etudiant/etablissements"
-                       class="text-white/50 hover:text-white px-3 py-3 rounded-lg
-                              border border-white/20 hover:border-white/40 duration-300">
-                        ✕
+                    <a href="index.php?route=etudiant/etablissements" class="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 hover:border-[#f1b456] hover:text-[#071d3b]">
+                        Effacer
                     </a>
                 <?php endif; ?>
             </div>
         </form>
 
-        <!-- Compteur de résultats -->
-        <p class="text-white/40 text-sm mb-6">
+        <p class="mt-5 text-sm text-slate-600">
             <?= count($offres) ?> offre(s) trouvée(s)
             <?= !empty($recherche) ? 'pour « ' . htmlspecialchars($recherche) . ' »' : '' ?>
         </p>
 
         <?php if (empty($offres)): ?>
-            <div class="text-center py-16 text-white/50">
+            <div class="py-16 text-center text-slate-600">
                 <p>Aucune offre ne correspond à votre recherche.</p>
             </div>
         <?php else: ?>
-            <!-- Grille des offres -->
-            <div class="grid md:grid-cols-2 gap-4">
+            <div class="mt-6 grid gap-4 md:grid-cols-2">
                 <?php foreach ($offres as $offre): ?>
-                    <div class="bg-[#071d3b]/40 border border-white/10 rounded-xl p-5
-                                hover:border-[#f1b456]/30 duration-300 flex flex-col gap-3">
-
-                        <!-- Nom de la filière + établissement -->
+                    <article class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-[#f1b456]/60">
                         <div>
-                            <h3 class="text-white font-bold text-lg">
+                            <h3 class="text-lg font-bold text-[#071d3b]">
                                 <?= htmlspecialchars($offre['filiere_nom']) ?>
                             </h3>
-                            <p class="text-[#f1b456] text-sm font-medium">
+                            <p class="text-sm font-medium text-slate-600">
                                 <?= htmlspecialchars($offre['etablissement_nom']) ?>
                             </p>
                             <?php if ($offre['ville']): ?>
-                                <p class="text-white/40 text-xs mt-1">
-                                    📍 <?= htmlspecialchars($offre['ville']) ?>
+                                <p class="mt-1 text-xs text-slate-500">
+                                    <?= htmlspecialchars($offre['ville']) ?>
                                 </p>
                             <?php endif; ?>
                         </div>
 
-                        <!-- Métadonnées -->
-                        <div class="flex flex-wrap gap-2 text-sm text-white/60">
-                            <span>💰 <?= number_format($offre['frais_scolarite'], 0, ',', ' ') ?> Ar/an</span>
-                            <span>🎓 <?= $offre['place_disponible'] ?> place(s)</span>
+                        <div class="flex flex-wrap gap-2 text-xs text-slate-600">
+                            <span class="rounded-full bg-slate-100 px-3 py-1">Frais : <?= number_format($offre['frais_scolarite'], 0, ',', ' ') ?> Ar/an</span>
+                            <span class="rounded-full bg-slate-100 px-3 py-1">Places : <?= $offre['place_disponible'] ?></span>
                             <?php if ($offre['duree_formation']): ?>
-                                <span>📅 <?= htmlspecialchars($offre['duree_formation']) ?></span>
+                                <span class="rounded-full bg-slate-100 px-3 py-1">Durée : <?= htmlspecialchars($offre['duree_formation']) ?></span>
                             <?php endif; ?>
                         </div>
 
-                        <!-- Badges conditions d'accès -->
                         <?php if ($offre['serie_bac'] || $offre['moyenne_bac']): ?>
-                            <div class="flex flex-wrap gap-2">
+                            <div class="flex flex-wrap gap-2 text-xs">
                                 <?php if ($offre['serie_bac']): ?>
-                                    <span class="bg-blue-500/20 text-blue-300 text-xs px-2 py-1 rounded-full">
+                                    <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sky-800">
                                         Série <?= htmlspecialchars($offre['serie_bac']) ?>
                                     </span>
                                 <?php endif; ?>
                                 <?php if ($offre['moyenne_bac']): ?>
-                                    <span class="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-full">
-                                        Moy. min. <?= htmlspecialchars($offre['moyenne_bac']) ?>/20
+                                    <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-800">
+                                        Moyenne min. <?= htmlspecialchars($offre['moyenne_bac']) ?>/20
                                     </span>
                                 <?php endif; ?>
                             </div>
                         <?php else: ?>
-                            <span class="text-green-400 text-xs">✓ Ouvert à tous</span>
+                            <span class="text-xs font-semibold text-emerald-700">Ouvert à tous</span>
                         <?php endif; ?>
 
-                        <!-- Bouton Postuler (mini formulaire POST) -->
-                        <form method="POST" action="index.php?route=etudiant/candidature-soumettre"
-                              class="mt-auto">
-                            <input type="hidden" name="id_offre_filiere"
-                                   value="<?= $offre['id_offre_filiere'] ?>">
-                            <button type="submit"
-                                class="w-full bg-[#f1b456] text-[#071d3b] font-bold py-2 rounded-lg
-                                       hover:bg-[#f1b456]/80 duration-300 text-sm">
+                        <form method="POST" action="index.php?route=etudiant/candidature-soumettre" class="mt-auto">
+                            <input type="hidden" name="id_offre_filiere" value="<?= $offre['id_offre_filiere'] ?>">
+                            <button type="submit" class="w-full rounded-lg bg-[#f1b456] py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                                 Postuler
                             </button>
                         </form>
-
-                    </div>
+                    </article>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
-    </div>
+    </section>
 </main>
