@@ -218,3 +218,51 @@ CREATE TABLE consulter (
         REFERENCES offre_filiere(id_offre_filiere)
         ON DELETE CASCADE
 );
+
+-- Table candidature : une demande d'admission d'un étudiant pour une offre de filière
+CREATE TABLE candidature (
+    id_candidature   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    -- Statut du dossier : 4 états possibles
+    statut ENUM('en_attente', 'acceptee', 'refusee', 'annulee')
+        NOT NULL DEFAULT 'en_attente',
+
+    -- Date de la candidature (remplie automatiquement par MySQL)
+    date_candidature DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    -- Date à laquelle l'établissement a traité la demande (null tant que non traitée)
+    date_traitement  DATETIME DEFAULT NULL,
+
+    -- Message optionnel de l'étudiant lors de sa candidature
+    message TEXT DEFAULT NULL,
+
+    -- Clés étrangères
+    id_etudiant      INT UNSIGNED NOT NULL,
+    id_offre_filiere INT UNSIGNED NOT NULL,
+
+    CONSTRAINT fk_candidature_etudiant
+        FOREIGN KEY (id_etudiant)
+        REFERENCES etudiant(id_etudiant)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_candidature_offre
+        FOREIGN KEY (id_offre_filiere)
+        REFERENCES offre_filiere(id_offre_filiere)
+        ON DELETE CASCADE,
+
+    -- Un étudiant ne peut postuler qu'une seule fois à la même offre
+    UNIQUE KEY unique_candidature (id_etudiant, id_offre_filiere)
+);
+
+-- Filières initiales (exemple, à adapter selon le contexte malgache)
+INSERT INTO filiere (nom, description) VALUES
+('Informatique',       'Formation en développement logiciel, réseaux et systèmes'),
+('Médecine',           'Formation médicale générale (6 ans)'),
+('Droit',              'Études juridiques et sciences politiques'),
+('Économie',           'Sciences économiques et gestion'),
+('Génie Civil',        'Construction, bâtiment et travaux publics'),
+('Électronique',       'Électronique, électrotechnique et automatisme'),
+('Gestion',            'Management, comptabilité et finance d\'entreprise'),
+('Lettres',            'Littérature, linguistique et sciences humaines'),
+('Agronomie',          'Agriculture, élevage et développement rural'),
+('Tourisme',           'Hôtellerie, tourisme et gestion d\'établissements');

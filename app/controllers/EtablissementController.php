@@ -7,6 +7,8 @@
 require_once __DIR__ . "/../models/Etablissement.php";
 require_once __DIR__ . "/../models/Utilisateur.php";
 
+require_once __DIR__ . "/../models/Candidature.php";
+
 class EtablissementController
 {
     private PDO $pdo;
@@ -51,6 +53,86 @@ class EtablissementController
         $this->render('layouts/header');
         $this->render('etablissement/profil', ['etablissement' => $etablissement]);
         $this->render('layouts/footer');
+    }
+
+    // ─────────────────────────────────────────────
+    // Candidatures reçues par l'établissement
+    // ─────────────────────────────────────────────
+
+    /**
+     * Affiche les candidatures reçues par l'établissement, avec filtre par statut.
+     * ?route=etablissement/candidatures&statut=en_attente
+     */
+    public function candidatures(): void
+    {
+        check_role('etablissement');
+
+        $etablissement = $this->etablissementModel->findByIdUtilisateur($_SESSION['id_utilisateur']);
+
+        // Lire le filtre de statut dans l'URL (optionnel)
+        $statut = filter_input(INPUT_GET, 'statut', FILTER_SANITIZE_SPECIAL_CHARS);
+        $statutsValides = ['tous', 'en_attente', 'acceptee', 'refusee'];
+        // Si le statut n'est pas valide, on affiche tous
+        if (!in_array($statut, $statutsValides, true)) {
+            $statut = 'tous';
+        }
+
+        $candidatureModel = new Candidature($this->pdo);
+        $candidatures     = $candidatureModel->parEtablissement(
+            $etablissement['id_etablissement'],
+            $statut === 'tous' ? null : $statut
+        );
+
+        $this->render('layouts/header');
+        $this->render('etablissement/candidatures', [
+            'etablissement' => $etablissement,
+            'candidatures'  => $candidatures,
+            'statut'        => $statut,
+        ]);
+        $this->render('layouts/footer');
+    }
+
+    /**
+     * Accepte ou refuse une candidature (POST uniquement).
+     */
+    public function traiterCandidature(): void
+    {
+        check_role('etablissement');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: index.php?route=etablissement/candidatures");
+            exit();
+        }
+
+        $etablissement   = $this->etablissementModel->findByIdUtilisateur($_SESSION['id_utilisateur']);
+        $idCandidature   = (int) ($_POST['id_candidature'] ?? 0);
+        $statut          = trim($_POST['statut'] ?? '');
+        $statutsValides  = ['acceptee', 'refusee'];
+
+        // Validation stricte du statut (empêche l'injection d'une valeur arbitraire)
+        if ($idCandidature <= 0 || !in_array($statut, $statutsValides, true)) {
+            set_flash('error', 'Requête invalide.');
+            header("Location: index.php?route=etablissement/candidatures");
+            exit();
+        }
+
+        $candidatureModel = new Candidature($this->pdo);
+        // traiter() vérifie que la candidature appartient à cet établissement via la jointure SQL
+        $succes = $candidatureModel->traiter(
+            $idCandidature,
+            $etablissement['id_etablissement'],
+            $statut
+        );
+
+        if ($succes) {
+            $label = $statut === 'acceptee' ? 'acceptée' : 'refusée';
+            set_flash('success', "Candidature {$label} avec succès.");
+        } else {
+            set_flash('error', 'Impossible de traiter cette candidature (déjà traitée ou introuvable).');
+        }
+
+        header("Location: index.php?route=etablissement/candidatures");
+        exit();
     }
 
     /**
