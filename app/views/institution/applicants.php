@@ -5,7 +5,7 @@
 <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
     <section class="rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
         <div class="flex items-center gap-4 border-b border-slate-200 pb-6">
-            <a href="index.php?route=etablissement/accueil" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
+            <a href="index.php?route=institution/home" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
             <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Candidatures reçues</h1>
         </div>
 
@@ -20,7 +20,7 @@
             foreach ($onglets as $val => $label):
                 $isActif = $statut === $val;
             ?>
-                <a href="index.php?route=etablissement/candidatures&statut=<?= $val ?>" class="rounded-lg px-4 py-2 text-sm font-semibold <?= $isActif ? 'bg-[#f1b456] text-[#071d3b]' : 'border border-slate-300 bg-white text-slate-600 hover:border-[#f1b456]' ?>">
+                <a href="index.php?route=institution/applications&statut=<?= $val ?>" class="rounded-lg px-4 py-2 text-sm font-semibold <?= $isActif ? 'bg-[#f1b456] text-[#071d3b]' : 'border border-slate-300 bg-white text-slate-600 hover:border-[#f1b456]' ?>">
                     <?= $label ?>
                 </a>
             <?php endforeach; ?>
@@ -53,7 +53,7 @@
 
                             <div class="flex items-center gap-2">
                                 <?php if ($c['statut'] === 'en_attente'): ?>
-                                    <form method="POST" action="index.php?route=etablissement/candidature-traiter" class="flex gap-2">
+                                    <form method="POST" action="index.php?route=institution/application/process" class="flex gap-2">
                                         <input type="hidden" name="id_candidature" value="<?= $c['id_candidature'] ?>">
                                         <button type="submit" name="statut" value="acceptee" class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">
                                             Accepter

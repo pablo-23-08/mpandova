@@ -10,13 +10,13 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-                <a href="index.php?route=etudiant/accueil" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
+                <a href="index.php?route=student/home" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
                     Retour
                 </a>
             </div>
         </div>
 
-        <form method="POST" action="index.php?route=etudiant/profil" novalidate class="space-y-8">
+        <form method="POST" action="index.php?route=student/profile" novalidate class="space-y-8">
             <div>
                 <h2 class="text-lg font-bold text-[#071d3b]">Informations personnelles</h2>
                 <div class="mt-4 grid gap-5 sm:grid-cols-2">

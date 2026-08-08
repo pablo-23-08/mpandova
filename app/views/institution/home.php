@@ -14,19 +14,19 @@
         </div>
 
         <div class="mt-6 grid gap-4 md:grid-cols-3">
-            <a href="index.php?route=etablissement/filieres" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
+            <a href="index.php?route=institution/programs" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
                 <img src="assets/img/filiere.webp" alt="Filières" class="h-10 w-10 object-contain">
                 <h2 class="mt-4 text-base font-bold text-[#071d3b]">Mes filières</h2>
                 <p class="mt-2 text-sm text-slate-600">Gérer vos formations.</p>
             </a>
 
-            <a href="index.php?route=etablissement/candidatures" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
+            <a href="index.php?route=institution/applications" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
                 <img src="assets/img/candidature.webp" alt="Candidatures" class="h-10 w-10 object-contain">
                 <h2 class="mt-4 text-base font-bold text-[#071d3b]">Candidatures</h2>
                 <p class="mt-2 text-sm text-slate-600">Consulter les demandes reçues.</p>
             </a>
 
-            <a href="index.php?route=etablissement/profil" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
+            <a href="index.php?route=institution/profile" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
                 <img src="assets/img/setting.webp" alt="Profil" class="h-10 w-10 object-contain">
                 <h2 class="mt-4 text-base font-bold text-[#071d3b]">Profil</h2>
                 <p class="mt-2 text-sm text-slate-600">Modifier les informations de l’établissement.</p>

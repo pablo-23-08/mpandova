@@ -4,22 +4,22 @@
 // Gère : page d'accueil, connexion, déconnexion, inscription
 // ═══════════════════════════════════════════════
 
-// Charger les Models dont ce Controller a besoin
-require_once __DIR__ . "/../models/Utilisateur.php";
-require_once __DIR__ . "/../models/Etudiant.php";
-require_once __DIR__ . "/../models/Diplome.php";
-require_once __DIR__ . "/../models/Etablissement.php";
+// Charger les Models dont ce Controller a besoin (noms de classes/fichiers traduits en anglais)
+require_once __DIR__ . "/../models/User.php";
+require_once __DIR__ . "/../models/Student.php";
+require_once __DIR__ . "/../models/Degree.php";
+require_once __DIR__ . "/../models/Institution.php";
 
 class AuthController
 {
-    private PDO $pdo;               // Connexion à la base de données
-    private Utilisateur $utilisateurModel; // Instance du Model Utilisateur
+    private PDO $pdo;        // Connexion à la base de données
+    private User $userModel; // Instance du Model User
 
     // Constructeur : injecte la connexion PDO et instancie les Models nécessaires
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
-        $this->utilisateurModel = new Utilisateur($pdo);
+        $this->userModel = new User($pdo);
     }
 
     // ─────────────────────────────────────────────
@@ -43,20 +43,20 @@ class AuthController
     // ─────────────────────────────────────────────
 
     /**
-     * GET  → affiche le formulaire de connexion
-     * POST → traite le formulaire et connecte l'utilisateur
+     * GET  -> affiche le formulaire de connexion
+     * POST -> traite le formulaire et connecte l'utilisateur
      */
     public function login(): void
     {
         redirect_if_logged();
 
-        // Si la requête est un envoi de formulaire (POST) → traiter les données
+        // Si la requête est un envoi de formulaire (POST) -> traiter les données
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->traiterLogin();
+            $this->processLogin();
             return;
         }
 
-        // Sinon (GET) → afficher le formulaire
+        // Sinon (GET) -> afficher le formulaire
         $this->render('layouts/header');
         $this->render('auth/login');
         $this->render('layouts/footer');
@@ -66,7 +66,7 @@ class AuthController
      * Logique de traitement du formulaire de connexion.
      * Méthode privée : appelée uniquement par login() en cas de POST.
      */
-    private function traiterLogin(): void
+    private function processLogin(): void
     {
         // filter_input sécurise la récupération : valide le format email
         $email    = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
@@ -74,39 +74,39 @@ class AuthController
 
         // Validation des champs
         if (!$email || empty($password)) {
-            set_flash('error', 'Veuillez remplir tous les champs correctement.');
+            set_flash('error', 'Veuillez remplir tous les champs correctement');
             header("Location: index.php?route=auth/login");
             exit();
         }
 
-        // Chercher l'utilisateur par email (Model Utilisateur)
-        $utilisateur = $this->utilisateurModel->findByEmail($email);
+        // Chercher l'utilisateur par email (Model User)
+        $user = $this->userModel->findByEmail($email);
 
         // Vérifier le mot de passe : password_verify compare le clair avec le hash stocké
-        if (!$utilisateur || !password_verify($password, $utilisateur['mot_de_passe_hash'])) {
+        if (!$user || !password_verify($password, $user['mot_de_passe_hash'])) {
             set_flash('error', 'Email ou mot de passe incorrect.');
             header("Location: index.php?route=auth/login");
             exit();
         }
 
-        // Succès → créer la session PHP
+        // Succès -> créer la session PHP
         session_regenerate_id(true); // Prévention de la fixation de session
-        $_SESSION['id_utilisateur'] = $utilisateur['id_utilisateur'];
-        $_SESSION['role']           = $utilisateur['role'];
+        $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
+        $_SESSION['role']           = $user['role'];
 
-        // Enregistrer aussi la session en base de données (Model Utilisateur)
-        $this->utilisateurModel->enregistrerSession(
+        // Enregistrer aussi la session en base de données (Model User)
+        $this->userModel->saveSession(
             session_id(),
-            $utilisateur['id_utilisateur'],
-            $utilisateur['role']
+            $user['id_utilisateur'],
+            $user['role']
         );
 
         // Rediriger selon le rôle
         $destinations = [
-            'etudiant'      => 'index.php?route=etudiant/accueil',
-            'etablissement' => 'index.php?route=etablissement/accueil',
+            'etudiant'      => 'index.php?route=student/home',
+            'etablissement' => 'index.php?route=institution/home',
         ];
-        $url = $destinations[$utilisateur['role']] ?? 'index.php';
+        $url = $destinations[$user['role']] ?? 'index.php';
         header("Location: $url");
         exit();
     }
@@ -121,7 +121,7 @@ class AuthController
     public function logout(): void
     {
         // Supprimer la session de la base de données
-        $this->utilisateurModel->supprimerSession(session_id());
+        $this->userModel->deleteSession(session_id());
 
         // Vider toutes les variables de session PHP
         $_SESSION = [];
@@ -131,7 +131,7 @@ class AuthController
             $params = session_get_cookie_params();
             setcookie(
                 session_name(), '',       // Nom du cookie, valeur vide
-                time() - 42000,          // Date d'expiration dans le passé → suppression
+                time() - 42000,          // Date d'expiration dans le passé -> suppression
                 $params["path"],
                 $params["domain"],
                 $params["secure"],
@@ -164,108 +164,107 @@ class AuthController
     // ─────────────────────────────────────────────
 
     /**
-     * GET  → affiche le formulaire d'inscription étudiant
-     * POST → crée le compte
+     * GET  -> affiche le formulaire d'inscription étudiant
+     * POST -> crée le compte
      */
-    public function registerEtudiant(): void
+    public function registerStudent(): void
     {
         redirect_if_logged();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->traiterRegisterEtudiant();
+            $this->processStudentRegistration();
             return;
         }
 
         $this->render('layouts/header');
-        $this->render('auth/register_etudiant');
+        $this->render('auth/student_register');
         $this->render('layouts/footer');
     }
 
     /**
      * Logique de création d'un compte étudiant.
      */
-    private function traiterRegisterEtudiant(): void
+    private function processStudentRegistration(): void
     {
         $email    = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $password = $_POST['password']         ?? '';
         $confirm  = $_POST['password_confirm'] ?? '';
-        $nom      = trim(htmlspecialchars($_POST['nom']    ?? ''));
-        $prenom   = trim(htmlspecialchars($_POST['prenom'] ?? ''));
-        $serie    = trim($_POST['serie_bac'] ?? '');
+        $lastName  = trim(htmlspecialchars($_POST['nom']    ?? ''));
+        $firstName = trim(htmlspecialchars($_POST['prenom'] ?? ''));
+        $series    = trim($_POST['serie_bac'] ?? '');
 
-        $seriesValides = ['A', 'C', 'D', 'L', 'OSE', 'S'];
+        $validSeries = ['A', 'C', 'D', 'L', 'OSE', 'S'];
 
         // Validation des champs
         if (!$email) {
-            set_flash('error', 'Adresse email invalide.');
-            header("Location: index.php?route=auth/register-etudiant");
+            set_flash('error', 'Adresse email invalide');
+            header("Location: index.php?route=auth/student/register");
             exit();
         }
         if (strlen($password) < 8) {
             set_flash('error', 'Le mot de passe doit contenir au moins 8 caractères.');
-            header("Location: index.php?route=auth/register-etudiant");
+            header("Location: index.php?route=auth/student/register");
             exit();
         }
         if ($password !== $confirm) {
             set_flash('error', 'Les mots de passe ne correspondent pas.');
-            header("Location: index.php?route=auth/register-etudiant");
+            header("Location: index.php?route=auth/student/register");
             exit();
         }
-        if (empty($nom) || empty($prenom)) {
+        if (empty($lastName) || empty($firstName)) {
             set_flash('error', 'Nom et prénom sont obligatoires.');
-            header("Location: index.php?route=auth/register-etudiant");
+            header("Location: index.php?route=auth/student/register");
             exit();
         }
-        if (!in_array($serie, $seriesValides, true)) {
+        if (!in_array($series, $validSeries, true)) {
             // in_array avec true = comparaison stricte (type + valeur)
             set_flash('error', 'Série de baccalauréat invalide.');
-            header("Location: index.php?route=auth/register-etudiant");
+            header("Location: index.php?route=auth/student/register");
             exit();
         }
-        if ($this->utilisateurModel->emailExiste($email)) {
+        if ($this->userModel->emailExists($email)) {
             set_flash('error', 'Cette adresse email est déjà utilisée.');
-            header("Location: index.php?route=auth/register-etudiant");
+            header("Location: index.php?route=auth/student/register");
             exit();
         }
 
-        // Toutes les validations sont passées → insérer en base dans une transaction
         try {
-            // begin() : si une des insertions échoue, tout est annulé (atomicité)
+            // Toutes les opérations sont regroupées dans une transaction :
+            // soit tout réussit, soit tout est annulé (cohérence des données)
             $this->pdo->beginTransaction();
 
-            // 1. Créer l'utilisateur (table utilisateur)
-            $idUtilisateur = $this->utilisateurModel->creer($email, $password, 'etudiant');
+            // 1. Créer l'utilisateur (compte de connexion)
+            $userId = $this->userModel->create($email, $password, 'etudiant');
 
-            // 2. Créer le profil étudiant (table etudiant)
-            $etudiantModel = new Etudiant($this->pdo);
-            $idEtudiant    = $etudiantModel->creer($nom, $prenom, $idUtilisateur);
+            // 2. Créer le profil étudiant lié à cet utilisateur
+            $studentModel = new Student($this->pdo);
+            $studentId    = $studentModel->create($lastName, $firstName, $userId);
 
-            // 3. Créer le diplôme vide et le bac avec la série (tables diplome + bac)
-            $diplomeModel = new Diplome($this->pdo);
-            $idDiplome    = $diplomeModel->creerVierge($idEtudiant);
-            $diplomeModel->creerBacVierge($serie, $idDiplome);
+            // 3. Créer un diplôme vierge (sera complété plus tard dans le profil)
+            $degreeModel = new Degree($this->pdo);
+            $degreeId    = $degreeModel->createBlank($studentId);
 
-            // Valider la transaction : toutes les insertions ont réussi
+            // 4. Créer l'entrée bac liée avec la série choisie
+            $degreeModel->createBlankExam($series, $degreeId);
+
             $this->pdo->commit();
 
+            // Connexion automatique après inscription
+            session_regenerate_id(true);
+            $_SESSION['id_utilisateur'] = $userId;
+            $_SESSION['role']           = 'etudiant';
+            $this->userModel->saveSession(session_id(), $userId, 'etudiant');
+
+            set_flash('success', 'Bienvenue sur Mpandova ! Votre compte a été créé.');
+            header("Location: index.php?route=student/home");
+            exit();
         } catch (PDOException $e) {
-            // Annuler toutes les insertions si une erreur survient
             $this->pdo->rollBack();
             error_log("Erreur inscription étudiant : " . $e->getMessage());
             set_flash('error', 'Une erreur est survenue. Veuillez réessayer.');
-            header("Location: index.php?route=auth/register-etudiant");
+            header("Location: index.php?route=auth/student/register");
             exit();
         }
-
-        // Créer la session PHP après inscription réussie
-        session_regenerate_id(true);
-        $_SESSION['id_utilisateur'] = $idUtilisateur;
-        $_SESSION['role']           = 'etudiant';
-        $this->utilisateurModel->enregistrerSession(session_id(), $idUtilisateur, 'etudiant');
-
-        set_flash('success', 'Bienvenue sur Mpandova ! Votre compte a été créé.');
-        header("Location: index.php?route=etudiant/accueil");
-        exit();
     }
 
     // ─────────────────────────────────────────────
@@ -273,110 +272,109 @@ class AuthController
     // ─────────────────────────────────────────────
 
     /**
-     * GET  → affiche le formulaire d'inscription établissement
-     * POST → crée le compte
+     * GET  -> affiche le formulaire d'inscription établissement
+     * POST -> crée le compte
      */
-    public function registerEtablissement(): void
+    public function registerInstitution(): void
     {
         redirect_if_logged();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->traiterRegisterEtablissement();
+            $this->processInstitutionRegistration();
             return;
         }
 
         $this->render('layouts/header');
-        $this->render('auth/register_etablissement');
+        $this->render('auth/institution_register');
         $this->render('layouts/footer');
     }
 
     /**
      * Logique de création d'un compte établissement.
      */
-    private function traiterRegisterEtablissement(): void
+    private function processInstitutionRegistration(): void
     {
         $email    = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $password = $_POST['password']         ?? '';
         $confirm  = $_POST['password_confirm'] ?? '';
-        $nom      = trim(htmlspecialchars($_POST['nom']  ?? ''));
+        $name     = trim(htmlspecialchars($_POST['nom']  ?? ''));
         $type     = trim($_POST['type'] ?? '');
 
+        // Validation des champs
         if (!$email) {
             set_flash('error', 'Adresse email invalide.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
         if (strlen($password) < 8) {
             set_flash('error', 'Le mot de passe doit contenir au moins 8 caractères.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
         if ($password !== $confirm) {
             set_flash('error', 'Les mots de passe ne correspondent pas.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
-        if (empty($nom)) {
+        if (empty($name)) {
             set_flash('error', "Le nom de l'établissement est obligatoire.");
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
-        // Etablissement::typesValides() est la source unique de vérité pour les types
-        if (!in_array($type, Etablissement::typesValides(), true)) {
+        // Utilise Institution::validTypes() -- source unique de vérité
+        if (!in_array($type, Institution::validTypes(), true)) {
             set_flash('error', "Type d'établissement invalide.");
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
-        if ($this->utilisateurModel->emailExiste($email)) {
+        if ($this->userModel->emailExists($email)) {
             set_flash('error', 'Cette adresse email est déjà utilisée.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
 
         try {
             $this->pdo->beginTransaction();
 
-            $idUtilisateur      = $this->utilisateurModel->creer($email, $password, 'etablissement');
-            $etablissementModel = new Etablissement($this->pdo);
-            $etablissementModel->creer($nom, $type, $idUtilisateur);
+            // 1. Créer l'utilisateur (compte de connexion)
+            $userId = $this->userModel->create($email, $password, 'etablissement');
+
+            // 2. Créer le profil établissement lié à cet utilisateur
+            $institutionModel = new Institution($this->pdo);
+            $institutionModel->create($name, $type, $userId);
 
             $this->pdo->commit();
 
+            // Connexion automatique après inscription
+            session_regenerate_id(true);
+            $_SESSION['id_utilisateur'] = $userId;
+            $_SESSION['role']           = 'etablissement';
+            $this->userModel->saveSession(session_id(), $userId, 'etablissement');
+
+            set_flash('success', 'Bienvenue sur Mpandova ! Votre compte a été créé.');
+            header("Location: index.php?route=institution/home");
+            exit();
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             error_log("Erreur inscription établissement : " . $e->getMessage());
             set_flash('error', 'Une erreur est survenue. Veuillez réessayer.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
-
-        session_regenerate_id(true);
-        $_SESSION['id_utilisateur'] = $idUtilisateur;
-        $_SESSION['role']           = 'etablissement';
-        $this->utilisateurModel->enregistrerSession(session_id(), $idUtilisateur, 'etablissement');
-
-        set_flash('success', 'Bienvenue sur Mpandova ! Votre compte a été créé.');
-        header("Location: index.php?route=etablissement/accueil");
-        exit();
     }
 
     // ─────────────────────────────────────────────
-    // Méthode utilitaire : rendu d'une vue
+    // Rendu des vues
     // ─────────────────────────────────────────────
 
     /**
-     * Inclut un fichier de vue.
-     * Les variables passées en 2ème argument deviennent disponibles dans la vue.
-     *
-     * @param string $view   Chemin relatif depuis app/views/ (sans .php)
-     * @param array  $data   Variables à injecter dans la vue (ex: ['nom' => 'Jean'])
+     * Inclut un fichier de vue en lui rendant disponibles les données fournies.
+     * Les clés du tableau $data restent volontairement en français : ce sont
+     * les noms de variables attendus par les vues (contrat d'interface inchangé).
      */
     protected function render(string $view, array $data = []): void
     {
-        // extract() transforme ['nom' => 'Jean'] en variable $nom = 'Jean'
-        // EXTR_SKIP : si une variable du même nom existe déjà, ne pas l'écraser
         extract($data, EXTR_SKIP);
-        // Construire le chemin absolu vers le fichier de vue
         require __DIR__ . "/../views/{$view}.php";
     }
 }

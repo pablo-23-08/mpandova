@@ -4,13 +4,13 @@
 // $mode     : 'ajouter' | 'modifier'
 
 $actionUrl = ($mode === 'modifier')
-    ? "index.php?route=etablissement/filiere-modifier&id={$offre['id_offre_filiere']}"
-    : "index.php?route=etablissement/filiere-ajouter";
+    ? "index.php?route=institution/program/edit&id={$offre['id_offre_filiere']}"
+    : "index.php?route=institution/program/create";
 ?>
 <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
     <section class="rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
         <div class="mb-8 flex items-center gap-4 border-b border-slate-200 pb-6">
-            <a href="index.php?route=etablissement/filieres" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
+            <a href="index.php?route=institution/programs" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
             <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">
                 <?= $mode === 'modifier' ? 'Modifier la filière' : 'Ajouter une filière' ?>
             </h1>
@@ -57,7 +57,7 @@ $actionUrl = ($mode === 'modifier')
 
                 <div>
                     <h2 class="text-lg font-bold text-[#071d3b]">Conditions d'accès</h2>
-                    <p class="mt-1 text-sm text-slate-500">Optionnelles — laisser vide pour ne pas imposer de restriction.</p>
+                    <p class="mt-1 text-sm text-slate-500">Optionnelles | laisser vide pour ne pas imposer de restriction</p>
                     <div class="mt-4 grid gap-5 md:grid-cols-3">
                         <div>
                             <label for="serie_bac" class="mb-2 block text-sm font-semibold text-[#071d3b]">Série bac requise</label>

@@ -1,10 +1,11 @@
 <?php
 // ═══════════════════════════════════════════════
-// MODEL Diplome
+// MODEL Degree (anciennement "Diplome")
 // Gère les tables `diplome` et `bac`
+// Remarque : les noms de tables/colonnes SQL restent inchangés
 // ═══════════════════════════════════════════════
 
-class Diplome
+class Degree
 {
     private PDO $pdo;
 
@@ -18,13 +19,13 @@ class Diplome
      * annee_obtention et les infos bac seront complétées dans le profil.
      * @return int L'ID du diplôme créé
      */
-    public function creerVierge(int $idEtudiant): int
+    public function createBlank(int $studentId): int
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO diplome (nom, annee_obtention, id_etudiant) VALUES (?, ?, ?)"
         );
         // 'Baccalauréat' est le nom par défaut, l'année est null pour l'instant
-        $stmt->execute(['Baccalauréat', null, $idEtudiant]);
+        $stmt->execute(['Baccalauréat', null, $studentId]);
         return (int) $this->pdo->lastInsertId();
     }
 
@@ -32,35 +33,35 @@ class Diplome
      * Crée une entrée bac vide liée à un diplôme.
      * La série est fournie dès l'inscription, moyenne et mention seront ajoutées plus tard.
      */
-    public function creerBacVierge(string $serie, int $idDiplome): void
+    public function createBlankExam(string $series, int $degreeId): void
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO bac (serie, moyenne, mention, id_diplome) VALUES (?, ?, ?, ?)"
         );
-        $stmt->execute([$serie, null, null, $idDiplome]);
+        $stmt->execute([$series, null, null, $degreeId]);
     }
 
     /**
      * Met à jour l'année d'obtention dans la table diplome.
      * Null si l'année n'est pas encore renseignée (valeur 0 du formulaire).
      */
-    public function mettreAJourAnnee(int $idDiplome, int $annee): void
+    public function updateYear(int $degreeId, int $year): void
     {
         $stmt = $this->pdo->prepare(
             "UPDATE diplome SET annee_obtention = ? WHERE id_diplome = ?"
         );
-        $stmt->execute([$annee > 0 ? $annee : null, $idDiplome]);
+        $stmt->execute([$year > 0 ? $year : null, $degreeId]);
     }
 
     /**
      * Met à jour les détails du bac (série, moyenne, mention).
-     * La mention est calculée par Etudiant::calculerMention() avant d'être passée ici.
+     * La mention est calculée par Student::computeHonors() avant d'être passée ici.
      */
-    public function mettreAJourBac(int $idBac, string $serie, float $moyenne, ?string $mention): void
+    public function updateExam(int $examId, string $series, float $average, ?string $honors): void
     {
         $stmt = $this->pdo->prepare(
             "UPDATE bac SET serie = ?, moyenne = ?, mention = ? WHERE id_bac = ?"
         );
-        $stmt->execute([$serie, $moyenne, $mention, $idBac]);
+        $stmt->execute([$series, $average, $honors, $examId]);
     }
 }
