@@ -6,10 +6,10 @@
     <section class="rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-6">
             <div class="flex items-center gap-4">
-                <a href="index.php?route=etablissement/accueil" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
+                <a href="index.php?route=institution/home" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
                 <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Mes filières</h1>
             </div>
-            <a href="index.php?route=etablissement/filiere-ajouter" class="rounded-lg bg-[#f1b456] px-5 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
+            <a href="index.php?route=institution/program/create" class="rounded-lg bg-[#f1b456] px-5 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                 Ajouter une filière
             </a>
         </div>
@@ -17,7 +17,7 @@
         <?php if (empty($offres)): ?>
             <div class="py-16 text-center text-slate-600">
                 <p class="mb-3">Vous n'avez encore proposé aucune filière.</p>
-                <a href="index.php?route=etablissement/filiere-ajouter" class="font-semibold text-[#071d3b] hover:underline">Ajouter votre première filière</a>
+                <a href="index.php?route=institution/program/create" class="font-semibold text-[#071d3b] hover:underline">Ajouter votre première filière</a>
             </div>
         <?php else: ?>
             <div class="mt-6 space-y-4">
@@ -47,10 +47,10 @@
                             </div>
 
                             <div class="flex gap-2">
-                                <a href="index.php?route=etablissement/filiere-modifier&id=<?= $offre['id_offre_filiere'] ?>" class="rounded-lg border border-[#f1b456]/50 bg-[#f1b456]/15 px-4 py-2 text-sm font-semibold text-[#8a5a10] hover:bg-[#f1b456]/25">
+                                <a href="index.php?route=institution/program/edit&id=<?= $offre['id_offre_filiere'] ?>" class="rounded-lg border border-[#f1b456]/50 bg-[#f1b456]/15 px-4 py-2 text-sm font-semibold text-[#8a5a10] hover:bg-[#f1b456]/25">
                                     Modifier
                                 </a>
-                                <a href="index.php?route=etablissement/filiere-supprimer&id=<?= $offre['id_offre_filiere'] ?>" onclick="return confirm('Supprimer cette filière ? Les candidatures associées seront aussi supprimées.')" class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100">
+                                <a href="index.php?route=institution/program/delete&id=<?= $offre['id_offre_filiere'] ?>" onclick="return confirm('Supprimer cette filière ? Les candidatures associées seront aussi supprimées.')" class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100">
                                     Supprimer
                                 </a>
                             </div>

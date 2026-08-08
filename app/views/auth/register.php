@@ -16,13 +16,13 @@
         </div>
 
         <div class="mt-8 grid gap-4 sm:grid-cols-2">
-            <a href="index.php?route=auth/register-etudiant" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
+            <a href="index.php?route=auth/student-register" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
                 <img src="assets/img/student.webp" alt="Compte étudiant" class="h-12 w-12 object-contain">
                 <h2 class="mt-4 text-lg font-bold text-[#071d3b]">Étudiant</h2>
                 <p class="mt-2 text-sm text-slate-600">Créer un profil pour recevoir des recommandations de filières et établissements.</p>
             </a>
 
-            <a href="index.php?route=auth/register-etablissement" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
+            <a href="index.php?route=auth/institution-register" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-[#f1b456] hover:bg-[#f1b456]/10">
                 <img src="assets/img/school.webp" alt="Compte établissement" class="h-12 w-12 object-contain">
                 <h2 class="mt-4 text-lg font-bold text-[#071d3b]">Établissement</h2>
                 <p class="mt-2 text-sm text-slate-600">Publier des filières, gérer les informations de l’établissement et suivre les candidatures.</p>

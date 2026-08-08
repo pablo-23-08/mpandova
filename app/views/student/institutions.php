@@ -11,14 +11,14 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-                <a href="index.php?route=etudiant/accueil" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
+                <a href="index.php?route=student/home" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
                     Retour
                 </a>
             </div>
         </div>
 
         <form method="GET" action="index.php" class="mt-6">
-            <input type="hidden" name="route" value="etudiant/etablissements">
+            <input type="hidden" name="route" value="student/institutions">
             <div class="flex flex-col gap-3 sm:flex-row">
                 <input
                     type="text"
@@ -31,7 +31,7 @@
                     Rechercher
                 </button>
                 <?php if (!empty($recherche)): ?>
-                    <a href="index.php?route=etudiant/etablissements" class="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 hover:border-[#f1b456] hover:text-[#071d3b]">
+                    <a href="index.php?route=student/institutions" class="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 hover:border-[#f1b456] hover:text-[#071d3b]">
                         Effacer
                     </a>
                 <?php endif; ?>
@@ -45,7 +45,7 @@
 
         <?php if (empty($offres)): ?>
             <div class="py-16 text-center text-slate-600">
-                <p>Aucune offre ne correspond à votre recherche.</p>
+                <p>Aucune offre ne correspond à votre recherche</p>
             </div>
         <?php else: ?>
             <div class="mt-6 grid gap-4 md:grid-cols-2">
@@ -90,7 +90,7 @@
                             <span class="text-xs font-semibold text-emerald-700">Ouvert à tous</span>
                         <?php endif; ?>
 
-                        <form method="POST" action="index.php?route=etudiant/candidature-soumettre" class="mt-auto">
+                        <form method="POST" action="index.php?route=student/application/submit" class="mt-auto">
                             <input type="hidden" name="id_offre_filiere" value="<?= $offre['id_offre_filiere'] ?>">
                             <button type="submit" class="w-full rounded-lg bg-[#f1b456] py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                                 Postuler

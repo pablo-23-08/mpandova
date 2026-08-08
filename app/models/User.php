@@ -1,16 +1,17 @@
 <?php
 // ═══════════════════════════════════════════════
-// MODEL Utilisateur
+// MODEL User (anciennement "Utilisateur")
 // Gère la table `utilisateur` (connexion, inscription, mot de passe)
+// Remarque : le nom de la table SQL reste inchangé (structure de la BDD conservée)
 // ═══════════════════════════════════════════════
 
-class Utilisateur
+class User
 {
     // La connexion PDO est stockée comme propriété de l'objet
     // Elle est injectée depuis le Controller (injection de dépendances)
     private PDO $pdo;
 
-    // Constructeur : appelé automatiquement quand on fait new Utilisateur($pdo)
+    // Constructeur : appelé automatiquement quand on fait new User($pdo)
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
@@ -33,7 +34,7 @@ class Utilisateur
      * Vérifie si un email est déjà utilisé dans la base.
      * Utilisé lors de l'inscription pour éviter les doublons.
      */
-    public function emailExiste(string $email): bool
+    public function emailExists(string $email): bool
     {
         $stmt = $this->pdo->prepare("SELECT id_utilisateur FROM utilisateur WHERE email = ?");
         $stmt->execute([$email]);
@@ -45,11 +46,11 @@ class Utilisateur
      * Crée un nouvel utilisateur en base.
      * @return int L'ID auto-incrémenté du nouvel utilisateur
      */
-    public function creer(string $email, string $motDePasse, string $role): int
+    public function create(string $email, string $password, string $role): int
     {
         // Hachage du mot de passe : bcrypt par défaut via PASSWORD_DEFAULT
         // Le hash est stocké, jamais le mot de passe en clair
-        $hash = password_hash($motDePasse, PASSWORD_DEFAULT);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $this->pdo->prepare(
             "INSERT INTO utilisateur (email, mot_de_passe_hash, role) VALUES (?, ?, ?)"
@@ -64,13 +65,13 @@ class Utilisateur
      * Met à jour le mot de passe d'un utilisateur.
      * Utilisé dans les pages de profil.
      */
-    public function mettreAJourMotDePasse(int $idUtilisateur, string $nouveauMotDePasse): void
+    public function updatePassword(int $userId, string $newPassword): void
     {
-        $hash = password_hash($nouveauMotDePasse, PASSWORD_DEFAULT);
+        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
         $stmt = $this->pdo->prepare(
             "UPDATE utilisateur SET mot_de_passe_hash = ? WHERE id_utilisateur = ?"
         );
-        $stmt->execute([$hash, $idUtilisateur]);
+        $stmt->execute([$hash, $userId]);
     }
 
     /**
@@ -78,19 +79,19 @@ class Utilisateur
      * Appelé après une connexion réussie.
      * REPLACE INTO = INSERT si n'existe pas, UPDATE si existe déjà (même session_id).
      */
-    public function enregistrerSession(string $sessionId, int $idUtilisateur, string $role): void
+    public function saveSession(string $sessionId, int $userId, string $role): void
     {
         $stmt = $this->pdo->prepare(
             "REPLACE INTO session (id_session, id_utilisateur, role, initial) VALUES (?, ?, ?, ?)"
         );
-        $stmt->execute([$sessionId, $idUtilisateur, $role, time()]);
+        $stmt->execute([$sessionId, $userId, $role, time()]);
     }
 
     /**
      * Supprime une session de la base de données.
      * Appelé lors de la déconnexion.
      */
-    public function supprimerSession(string $sessionId): void
+    public function deleteSession(string $sessionId): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM session WHERE id_session = ?");
         $stmt->execute([$sessionId]);

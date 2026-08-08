@@ -5,10 +5,10 @@
     <section class="rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
         <div class="mb-8 flex items-center justify-between gap-4">
             <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Profil établissement</h1>
-            <a href="index.php?route=etablissement/accueil" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
+            <a href="index.php?route=institution/home" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
         </div>
 
-        <form method="POST" action="index.php?route=etablissement/profil" novalidate class="space-y-8">
+        <form method="POST" action="index.php?route=institution/profile" novalidate class="space-y-8">
             <div>
                 <h2 class="text-lg font-bold text-[#071d3b]">Informations générales</h2>
                 <div class="mt-4 grid gap-5 sm:grid-cols-2">

@@ -7,16 +7,16 @@
         <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Mes recommandations</h1>
-                <p class="mt-1 text-sm text-slate-500">Offres classées par compatibilité avec votre profil.</p>
+                <p class="mt-1 text-sm text-slate-500">Offres classées par compatibilité avec votre profil</p>
             </div>
 
             <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-                <form method="POST" action="index.php?route=etudiant/recommandations">
+                <form method="POST" action="index.php?route=student/recommendations" class="flex gap-2">
                     <button type="submit" class="rounded-lg bg-[#f1b456] px-5 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                         Générer mes recommandations
                     </button>
                 </form>
-                <a href="index.php?route=etudiant/accueil" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
+                <a href="index.php?route=student/home" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
                     Retour
                 </a>
             </div>
@@ -25,7 +25,7 @@
         <?php if (!$etudiant['serie'] || !$etudiant['moyenne']): ?>
             <div class="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
                 Votre profil est incomplet.
-                <a href="index.php?route=etudiant/profil" class="font-semibold underline">
+                <a href="index.php?route=student/profile" class="font-semibold underline">
                     Renseignez votre série et moyenne de bac
                 </a>
                 pour obtenir des recommandations précises.
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
 
-                            <form method="POST" action="index.php?route=etudiant/candidature-soumettre" class="shrink-0">
+                            <form method="POST" action="index.php?route=student/application/submit" class="shrink-0">
                                 <input type="hidden" name="id_offre_filiere" value="<?= $reco['id_offre_filiere'] ?>">
                                 <button type="submit" class="rounded-lg bg-[#f1b456] px-5 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                                     Postuler
