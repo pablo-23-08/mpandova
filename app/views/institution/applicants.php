@@ -4,9 +4,16 @@
 ?>
 <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
     <section class="rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
-        <div class="flex items-center gap-4 border-b border-slate-200 pb-6">
-            <a href="index.php?route=institution/home" class="text-sm font-semibold text-[#071d3b] hover:underline">Retour</a>
-            <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Candidatures reçues</h1>
+        <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Candidatures reçues</h1>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+                <a href="index.php?route=institution/home" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
+                    Retour
+                </a>
+            </div>
         </div>
 
         <div class="mt-6 flex flex-wrap gap-2">

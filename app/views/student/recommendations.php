@@ -54,7 +54,7 @@
                                         <p class="text-sm font-medium text-slate-600">
                                             <?= htmlspecialchars($reco['etablissement_nom']) ?>
                                             <?php if ($reco['ville']): ?>
-                                                — <?= htmlspecialchars($reco['ville']) ?>
+                                                - <?= htmlspecialchars($reco['ville']) ?>
                                             <?php endif; ?>
                                         </p>
                                     </div>

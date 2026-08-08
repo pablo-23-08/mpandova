@@ -84,7 +84,7 @@ class InstitutionController
         );
 
         $this->render('layouts/header');
-        $this->render('institution/applications', [
+        $this->render('institution/applicants', [
             'etablissement' => $institution,
             'candidatures'  => $applications,
             'statut'        => $status,
@@ -100,7 +100,7 @@ class InstitutionController
         check_role('etablissement');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?route=institution/applications");
+            header("Location: index.php?route=institution/applicants");
             exit();
         }
 
@@ -112,7 +112,7 @@ class InstitutionController
         // Validation stricte du statut (empêche l'injection d'une valeur arbitraire)
         if ($applicationId <= 0 || !in_array($status, $validStatuses, true)) {
             set_flash('error', 'Requête invalide');
-            header("Location: index.php?route=institution/applications");
+            header("Location: index.php?route=institution/applicants");
             exit();
         }
 
@@ -131,7 +131,7 @@ class InstitutionController
             set_flash('error', 'Impossible de traiter cette candidature (déjà traitée ou introuvable)');
         }
 
-        header("Location: index.php?route=institution/applications");
+        header("Location: index.php?route=institution/applicants");
         exit();
     }
 
