@@ -85,7 +85,7 @@ class StudentController
         $firstName = trim(htmlspecialchars($_POST['prenom'] ?? ''));
         $birthDate = trim($_POST['date_de_naissance'] ?? '');
         $series    = trim($_POST['serie_bac'] ?? '');
-        $average   = (float) str_replace(',', '.', $_POST['moyenne'] ?? 0);
+        $average   = (float) str_replace(',', '.', $_POST['moyenne_bac'] ?? 0);
         $examYear  = (int) ($_POST['annee_obtention'] ?? 0);
 
         $validSeries = ['A', 'C', 'D', 'L', 'OSE', 'S'];
