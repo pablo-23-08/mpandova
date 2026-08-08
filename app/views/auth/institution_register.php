@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <form method="POST" action="index.php?route=auth/register-etablissement" novalidate class="grid gap-5 sm:grid-cols-2">
+        <form method="POST" action="index.php?route=auth/institution/register" novalidate class="grid gap-5 sm:grid-cols-2">
             <div class="sm:col-span-2">
                 <label for="nom" class="mb-2 block text-sm font-semibold text-[#071d3b]">Nom de l'établissement</label>
                 <input type="text" id="nom" name="nom" required class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30">
