@@ -285,7 +285,7 @@ class AuthController
         }
 
         $this->render('layouts/header');
-        $this->render('auth/register_etablissement');
+        $this->render('auth/institution_register');
         $this->render('layouts/footer');
     }
 
@@ -303,33 +303,33 @@ class AuthController
         // Validation des champs
         if (!$email) {
             set_flash('error', 'Adresse email invalide.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
         if (strlen($password) < 8) {
             set_flash('error', 'Le mot de passe doit contenir au moins 8 caractères.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
         if ($password !== $confirm) {
             set_flash('error', 'Les mots de passe ne correspondent pas.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
         if (empty($name)) {
             set_flash('error', "Le nom de l'établissement est obligatoire.");
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
         // Utilise Institution::validTypes() -- source unique de vérité
         if (!in_array($type, Institution::validTypes(), true)) {
             set_flash('error', "Type d'établissement invalide.");
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
         if ($this->userModel->emailExists($email)) {
             set_flash('error', 'Cette adresse email est déjà utilisée.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
 
@@ -352,13 +352,13 @@ class AuthController
             $this->userModel->saveSession(session_id(), $userId, 'etablissement');
 
             set_flash('success', 'Bienvenue sur Mpandova ! Votre compte a été créé.');
-            header("Location: index.php?route=etablissement/accueil");
+            header("Location: index.php?route=institution/home");
             exit();
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             error_log("Erreur inscription établissement : " . $e->getMessage());
             set_flash('error', 'Une erreur est survenue. Veuillez réessayer.');
-            header("Location: index.php?route=auth/register-etablissement");
+            header("Location: index.php?route=auth/institution/register");
             exit();
         }
     }

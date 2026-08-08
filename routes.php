@@ -21,14 +21,14 @@ $route = filter_input(INPUT_GET, 'route', FILTER_SANITIZE_SPECIAL_CHARS) ?: 'hom
 $routes = [
     'home' => ['AuthController', 'home'],
 
-    // ── Authentification ──
+    // - Authentification -
     'auth/login'                  => ['AuthController', 'login'],
     'auth/logout'                 => ['AuthController', 'logout'],
     'auth/register'                => ['AuthController', 'register'],
     'auth/student/register'       => ['AuthController', 'registerStudent'],
     'auth/institution/register'  => ['AuthController', 'registerInstitution'],
 
-    // ── Espace étudiant ──
+    // - Espace étudiant -
     'student/home'                 => ['StudentController', 'home'],
     'student/profile'                  => ['StudentController', 'profile'],
     'student/institutions'          => ['StudentController', 'institutions'],
@@ -37,7 +37,7 @@ $routes = [
     'student/application/submit'   => ['StudentController', 'submitApplication'],
     'student/application/cancel'     => ['StudentController', 'cancelApplication'],
 
-    // ── Espace établissement ──
+    // - Espace établissement -
     'institution/home'            => ['InstitutionController', 'home'],
     'institution/profile'             => ['InstitutionController', 'profile'],
     'institution/programs'           => ['ProgramController', 'index'],
