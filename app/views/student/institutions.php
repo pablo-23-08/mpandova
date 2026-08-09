@@ -100,18 +100,18 @@
                             <!-- Badges d'informations rapides -->
                             <div class="flex flex-wrap gap-2 text-xs text-slate-600">
 
-                                <span class="rounded-full bg-slate-100 px-3 py-1">
+                                <span class="rounded-lg bg-slate-100 px-3 py-1">
                                     Frais :
                                     <?= number_format($offre['frais_scolarite'], 0, ',', ' ') ?> Ar/an
                                 </span>
 
-                                <span class="rounded-full bg-slate-100 px-3 py-1">
+                                <span class="rounded-lg bg-slate-100 px-3 py-1">
                                     Places :
                                     <?= $offre['place_disponible'] ?>
                                 </span>
 
                                 <?php if ($offre['duree_formation']): ?>
-                                    <span class="rounded-full bg-slate-100 px-3 py-1">
+                                    <span class="rounded-lg bg-slate-100 px-3 py-1">
                                         Durée :
                                         <?= htmlspecialchars($offre['duree_formation']) ?>
                                     </span>
@@ -125,13 +125,13 @@
                                 <div class="flex flex-wrap gap-2 text-xs">
 
                                     <?php if ($offre['serie_bac']): ?>
-                                        <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sky-800">
+                                        <span class="rounded-lg border border-sky-200 bg-sky-50 px-3 py-1 text-sky-800">
                                             Série <?= htmlspecialchars($offre['serie_bac']) ?>
                                         </span>
                                     <?php endif; ?>
 
                                     <?php if ($offre['moyenne_bac']): ?>
-                                        <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-800">
+                                        <span class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1 text-amber-800">
                                             Moyenne min. <?= htmlspecialchars($offre['moyenne_bac']) ?>/20
                                         </span>
                                     <?php endif; ?>

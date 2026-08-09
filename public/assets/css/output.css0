@@ -381,7 +381,7 @@
   .rounded-3xl {
     border-radius: var(--radius-3xl);
   }
-  .rounded-full {
+  .rounded-lg {
     border-radius: calc(infinity * 1px);
   }
   .rounded-lg {

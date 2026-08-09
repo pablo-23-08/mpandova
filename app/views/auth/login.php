@@ -1,7 +1,7 @@
 <main class="mx-auto flex w-full max-w-6xl flex-1 items-center px-4 py-10 sm:px-6 lg:px-8">
     <section class="grid w-full gap-8 rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 lg:grid-cols-2 lg:items-center lg:p-10">
         <article>
-            <p class="inline-flex rounded-full bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Connexion</p>
+            <p class="inline-flex rounded-lg bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Connexion</p>
             <h1 class="mt-4 text-3xl font-extrabold leading-tight text-[#071d3b] sm:text-4xl">Connecte-toi à ton espace Mpandova</h1>
             <p class="mt-4 text-slate-600">Accède à ton suivi d’orientation, à tes recommandations et à tes options d’établissement.</p>
             <a href="index.php" class="mt-6 inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">Revenir à l’accueil</a>

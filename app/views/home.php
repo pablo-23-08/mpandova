@@ -1,7 +1,7 @@
 <main class="mx-auto w-full max-w-6xl px-4 py-10 flex-1 sm:px-6 lg:px-8 lg:py-14">
     <section class="grid gap-8 rounded-3xl border border-white/15 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 lg:grid-cols-2 lg:items-center lg:p-10">
         <div>
-            <p class="inline-flex rounded-full bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Orientation académique</p>
+            <p class="inline-flex rounded-lg bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Orientation académique</p>
             <h1 class="mt-4 text-3xl font-extrabold leading-tight text-[#071d3b] sm:text-4xl lg:text-5xl">
                 Trouve ta voie avec une interface claire et guidée
             </h1>

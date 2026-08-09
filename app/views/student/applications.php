@@ -47,7 +47,7 @@
                                 [$badgeClass, $badgeLabel] = $badges[$c['statut']] ?? ['bg-slate-100 text-slate-700 border-slate-200', $c['statut']];
                                 ?>
 
-                                <span class="rounded-full border px-3 py-1 text-xs font-semibold <?= $badgeClass ?>">
+                                <span class="rounded-lg border px-3 py-1 text-xs font-semibold <?= $badgeClass ?>">
                                     <?= $badgeLabel ?>
                                 </span>
 

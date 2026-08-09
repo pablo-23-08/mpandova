@@ -97,9 +97,9 @@
                                             </span>
                                         </div>
 
-                                        <div class="h-2 w-full rounded-full bg-slate-200">
+                                        <div class="h-2 w-full rounded-lg bg-slate-200">
                                             <div
-                                                class="h-2 rounded-full bg-[#f1b456] transition-all duration-500"
+                                                class="h-2 rounded-lg bg-[#f1b456] transition-all duration-500"
                                                 style="width: <?= $reco['score'] ?>%">
                                             </div>
                                         </div>
@@ -112,17 +112,17 @@
 
                                     <div class="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
 
-                                        <span class="rounded-full bg-slate-100 px-3 py-1">
+                                        <span class="rounded-lg bg-slate-100 px-3 py-1">
                                             Frais :
                                             <?= number_format($reco['frais_scolarite'], 0, ',', ' ') ?> Ar/an
                                         </span>
 
-                                        <span class="rounded-full bg-slate-100 px-3 py-1">
+                                        <span class="rounded-lg bg-slate-100 px-3 py-1">
                                             Places : <?= $reco['place_disponible'] ?>
                                         </span>
 
                                         <?php if ($reco['duree_formation']): ?>
-                                            <span class="rounded-full bg-slate-100 px-3 py-1">
+                                            <span class="rounded-lg bg-slate-100 px-3 py-1">
                                                 Durée :
                                                 <?= htmlspecialchars($reco['duree_formation']) ?>
                                             </span>

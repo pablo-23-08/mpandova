@@ -3,7 +3,7 @@
         
         <div class="flex flex-col gap-4  pb-6 sm:flex-row sm:items-center sm:justify-between mb-6">
             <div class="text-center">
-                <p class="inline-flex rounded-full bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Inscription</p>
+                <p class="inline-flex rounded-lg bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Inscription</p>
                 <h1 class="mt-4 text-3xl font-extrabold leading-tight text-[#071d3b] sm:text-4xl">Choisir un type de compte</h1>
                 <p class="mt-3 text-slate-600">Sélectionne le profil qui correspond à votre usage de la plateforme.</p>
             </div>

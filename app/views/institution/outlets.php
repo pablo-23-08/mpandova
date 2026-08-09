@@ -65,7 +65,7 @@ $actionUrl = $modeEdition
 
                     <?php if (!empty($debouches)): ?>
 
-                        <span class="shrink-0 rounded-full bg-[#f1b456]/15 px-3 py-1 text-xs font-bold text-[#8a5a10]">
+                        <span class="shrink-0 rounded-lg bg-[#f1b456]/15 px-3 py-1 text-xs font-bold text-[#8a5a10]">
                             <?= count($debouches) ?>
                             débouché<?= count($debouches) > 1 ? 's' : '' ?>
                         </span>
@@ -80,7 +80,7 @@ $actionUrl = $modeEdition
 
                     <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
 
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl font-bold text-[#f1b456] shadow-sm">
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-white text-xl font-bold text-[#f1b456] shadow-sm">
                             +
                         </div>
 
@@ -117,7 +117,7 @@ $actionUrl = $modeEdition
 
                                     <div class="mt-3">
 
-                                        <span class="inline-block rounded-full bg-[#f1b456]/15 px-3 py-1 text-xs font-bold text-[#8a5a10]">
+                                        <span class="inline-block rounded-lg bg-[#f1b456]/15 px-3 py-1 text-xs font-bold text-[#8a5a10]">
                                             <?= htmlspecialchars($d['niveau_etude']) ?>
                                         </span>
 

@@ -65,10 +65,10 @@
             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <h2 class="text-sm font-bold uppercase tracking-wide text-[#071d3b]">Modalités de la formation</h2>
                 <div class="mt-2 flex flex-wrap gap-2 text-xs text-slate-600">
-                    <span class="rounded-full bg-white px-3 py-1 shadow-sm">Frais : <?= number_format($offre['frais_scolarite'], 0, ',', ' ') ?> Ar/an</span>
-                    <span class="rounded-full bg-white px-3 py-1 shadow-sm">Places : <?= $offre['place_disponible'] ?></span>
+                    <span class="rounded-lg bg-white px-3 py-1 shadow-sm">Frais : <?= number_format($offre['frais_scolarite'], 0, ',', ' ') ?> Ar/an</span>
+                    <span class="rounded-lg bg-white px-3 py-1 shadow-sm">Places : <?= $offre['place_disponible'] ?></span>
                     <?php if (!empty($offre['duree_formation'])): ?>
-                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Durée : <?= htmlspecialchars($offre['duree_formation']) ?></span>
+                        <span class="rounded-lg bg-white px-3 py-1 shadow-sm">Durée : <?= htmlspecialchars($offre['duree_formation']) ?></span>
                     <?php endif; ?>
                 </div>
 
@@ -125,7 +125,7 @@
                     [$badgeClass, $badgeLabel] = $badges[$candidature['statut']] ?? ['bg-slate-100 text-slate-700 border-slate-200', $candidature['statut']];
                 ?>
                 <h2 class="text-sm font-bold uppercase tracking-wide text-[#071d3b]">Votre candidature</h2>
-                <span class="mt-2 inline-block rounded-full border px-3 py-1 text-xs font-semibold <?= $badgeClass ?>">
+                <span class="mt-2 inline-block rounded-lg border px-3 py-1 text-xs font-semibold <?= $badgeClass ?>">
                     <?= $badgeLabel ?>
                 </span>
         

@@ -2,7 +2,7 @@
     <section class="w-full rounded-3xl border border-white/20 bg-white/95 p-6 shadow-2xl shadow-[#071d3b]/25 sm:p-8">
         <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between mb-6">
             <div>
-                <p class="inline-flex rounded-full bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Inscription établissement</p>
+                <p class="inline-flex rounded-lg bg-[#071d3b]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#071d3b]">Inscription établissement</p>
                 <h1 class="mt-4 text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Créer un compte établissement</h1>
                 <p class="mt-2 text-sm text-slate-600">Référence ton école et prépare la gestion de tes filières.</p>
             </div>

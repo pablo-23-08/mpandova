@@ -56,12 +56,12 @@
                                 <!-- Badges : série bac et moyenne -->
                                 <div class="mt-1 flex flex-wrap gap-2 text-xs text-slate-500">
                                     <?php if ($c['serie']): ?>
-                                        <span class="rounded-full bg-slate-100 px-2 py-1">
+                                        <span class="rounded-lg bg-slate-100 px-2 py-1">
                                             Série <?= htmlspecialchars($c['serie']) ?>
                                         </span>
                                     <?php endif; ?>
                                     <?php if ($c['moyenne']): ?>
-                                        <span class="rounded-full bg-slate-100 px-2 py-1">
+                                        <span class="rounded-lg bg-slate-100 px-2 py-1">
                                             Moyenne <?= htmlspecialchars($c['moyenne']) ?>/20
                                         </span>
                                     <?php endif; ?>
@@ -125,7 +125,7 @@
                                     $badgeClass = $badges[$c['statut']] ?? 'bg-slate-100 text-slate-700 border-slate-200';
                                     $badgeLabel = $labels[$c['statut']] ?? $c['statut'];
                                     ?>
-                                    <span class="rounded-full border px-3 py-1 text-xs font-semibold <?= $badgeClass ?>">
+                                    <span class="rounded-lg border px-3 py-1 text-xs font-semibold <?= $badgeClass ?>">
                                         <?= $badgeLabel ?>
                                     </span>
                                 <?php endif; ?>
