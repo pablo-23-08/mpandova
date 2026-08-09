@@ -35,6 +35,7 @@
                 $dashboard = match($_SESSION['role']) {
                     'etudiant'      => 'index.php?route=student/home',
                     'etablissement' => 'index.php?route=institution/home',
+                    'admin'         => 'index.php?route=admin/home',
                     default         => 'index.php',
                 };
                 ?>

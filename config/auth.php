@@ -94,6 +94,7 @@ function redirect_if_logged(): void
     $destinations = [
         'etudiant'      => 'index.php?route=student/home',
         'etablissement' => 'index.php?route=institution/home',
+        'admin'         => 'index.php?route=admin/home',
     ];
 
     $role = $_SESSION['role'] ?? '';

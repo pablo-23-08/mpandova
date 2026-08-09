@@ -14,6 +14,12 @@ require_once __DIR__ . "/app/controllers/StudentController.php";
 require_once __DIR__ . "/app/controllers/InstitutionController.php";
 require_once __DIR__ . "/app/controllers/ProgramController.php";
 require_once __DIR__ . "/app/controllers/OutletController.php";
+require_once __DIR__ . "/app/controllers/AuthController.php";
+require_once __DIR__ . "/app/controllers/StudentController.php";
+require_once __DIR__ . "/app/controllers/InstitutionController.php";
+require_once __DIR__ . "/app/controllers/ProgramController.php";
+require_once __DIR__ . "/app/controllers/OutletController.php";
+require_once __DIR__ . "/app/controllers/AdminController.php";   // ← AJOUTER
 
 // Lecture du paramètre ?route=... dans l'URL, "home" par défaut
 $route = filter_input(INPUT_GET, 'route', FILTER_SANITIZE_SPECIAL_CHARS) ?: 'home';
@@ -52,6 +58,17 @@ $routes = [
     'institution/program/outlets/delete'  => ['OutletController', 'delete'],
     'institution/applications'        => ['InstitutionController', 'applications'],
     'institution/application/process' => ['InstitutionController', 'processApplication'],
+
+    //  Espace administrateur // ← AJOUTER (tout ce bloc)
+    'admin/home'             => ['AdminController', 'home'],
+    'admin/users'            => ['AdminController', 'users'],
+    'admin/user/delete'      => ['AdminController', 'deleteUser'],
+    'admin/programs'         => ['AdminController', 'programs'],
+    'admin/program/create'   => ['AdminController', 'createProgram'],
+    'admin/program/edit'     => ['AdminController', 'editProgram'],
+    'admin/program/delete'   => ['AdminController', 'deleteProgram'],
+    'admin/institutions'     => ['AdminController', 'institutions'],
+    'admin/applications'     => ['AdminController', 'applications'],
 ];
 
 if (isset($routes[$route])) {
