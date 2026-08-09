@@ -3,7 +3,7 @@
 // MODEL Admin
 // Gère toutes les requêtes SQL spécifiques à l'administration :
 // statistiques, utilisateurs, filières (catalogue), établissements,
-// et vue globale des candidatures.
+// formations (offres), candidatures et activités récentes.
 // ═══════════════════════════════════════════════
 
 class Admin
@@ -21,12 +21,11 @@ class Admin
 
     /**
      * Retourne un tableau de compteurs pour le tableau de bord admin.
-     * Chaque COUNT(*) est une requête séparée : simple à lire et à maintenir.
      */
     public function getStats(): array
     {
-        // fetchColumn() récupère la première colonne de la première ligne
-        // Pratique pour un COUNT(*) qui retourne toujours une seule valeur
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM utilisateur");
+        $stats['nb_utilisateurs'] = (int) $stmt->fetchColumn();
 
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM etudiant");
         $stats['nb_etudiants'] = (int) $stmt->fetchColumn();
@@ -34,18 +33,18 @@ class Admin
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM etablissement");
         $stats['nb_etablissements'] = (int) $stmt->fetchColumn();
 
-        // filiere = catalogue de référence (géré par l'admin)
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM utilisateur WHERE role = 'admin'");
+        $stats['nb_admins'] = (int) $stmt->fetchColumn();
+
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM filiere");
         $stats['nb_filieres'] = (int) $stmt->fetchColumn();
 
-        // offre_filiere = filières publiées par les établissements
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM offre_filiere");
         $stats['nb_offres'] = (int) $stmt->fetchColumn();
 
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM candidature");
         $stats['nb_candidatures'] = (int) $stmt->fetchColumn();
 
-        // Candidatures non encore traitées : indicateur d'activité
         $stmt = $this->pdo->query(
             "SELECT COUNT(*) FROM candidature WHERE statut = 'en_attente'"
         );
@@ -54,18 +53,65 @@ class Admin
         return $stats;
     }
 
+    /**
+     * Récupère les candidatures récentes (5 dernières).
+     */
+    public function getRecentApplications(int $limit = 5): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                c.id_candidature,
+                c.statut,
+                c.date_candidature,
+                et.nom    AS etudiant_nom,
+                et.prenom AS etudiant_prenom,
+                f.nom     AS filiere_nom,
+                e.nom     AS etablissement_nom
+            FROM candidature c
+            JOIN etudiant      et  ON et.id_etudiant      = c.id_etudiant
+            JOIN offre_filiere off ON off.id_offre_filiere = c.id_offre_filiere
+            JOIN filiere       f   ON f.id_filiere         = off.id_filiere
+            JOIN etablissement e   ON e.id_etablissement   = off.id_etablissement
+            ORDER BY c.date_candidature DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Récupère les établissements récemment inscrits (5 derniers).
+     */
+    public function getRecentInstitutions(int $limit = 5): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                e.id_etablissement,
+                e.nom,
+                e.type,
+                u.email,
+                COUNT(off.id_offre_filiere) AS nb_offres
+            FROM etablissement e
+            JOIN utilisateur u ON u.id_utilisateur = e.id_utilisateur
+            LEFT JOIN offre_filiere off ON off.id_etablissement = e.id_etablissement
+            GROUP BY e.id_etablissement
+            ORDER BY e.id_etablissement DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
+    }
+
     // ─────────────────────────────────────────────
     // Gestion des utilisateurs
     // ─────────────────────────────────────────────
 
     /**
-     * Récupère tous les utilisateurs NON administrateurs.
-     * La jointure LEFT JOIN sur etudiant et etablissement permet d'afficher
-     * le nom de la personne ou de l'école selon le rôle.
+     * Récupère tous les utilisateurs avec filtre optionnel par rôle et recherche.
      */
-    public function findAllUsers(): array
+    public function findAllUsers(?string $role = null, ?string $search = null): array
     {
-        $stmt = $this->pdo->query("
+        $sql = "
             SELECT
                 u.id_utilisateur,
                 u.email,
@@ -76,43 +122,308 @@ class Admin
             FROM utilisateur u
             LEFT JOIN etudiant      et ON et.id_utilisateur = u.id_utilisateur
             LEFT JOIN etablissement e  ON e.id_utilisateur  = u.id_utilisateur
-            WHERE u.role != 'admin'
-            ORDER BY u.role ASC, u.id_utilisateur DESC
-        ");
+            WHERE 1=1
+        ";
+        $params = [];
+
+        if ($role && $role !== 'tous') {
+            $sql     .= " AND u.role = ?";
+            $params[] = $role;
+        }
+
+        if ($search) {
+            $sql .= " AND (u.email LIKE ? OR et.nom LIKE ? OR et.prenom LIKE ? OR e.nom LIKE ?)";
+            $like = '%' . $search . '%';
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        $sql .= " ORDER BY u.role ASC, u.id_utilisateur DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
     /**
-     * Récupère un utilisateur précis par son ID.
-     * Utilisé pour vérifier le rôle avant suppression (sécurité).
+     * Récupère un utilisateur précis par son ID avec ses informations de profil.
      */
     public function findUserById(int $userId): array|false
     {
-        $stmt = $this->pdo->prepare(
-            "SELECT id_utilisateur, email, role
-             FROM utilisateur
-             WHERE id_utilisateur = ?"
-        );
+        $stmt = $this->pdo->prepare("
+            SELECT
+                u.id_utilisateur,
+                u.email,
+                u.role,
+                et.nom          AS etudiant_nom,
+                et.prenom       AS etudiant_prenom,
+                et.telephone    AS etudiant_telephone,
+                et.date_de_naissance,
+                e.nom           AS etablissement_nom,
+                e.type          AS etablissement_type,
+                e.site_web,
+                l.ville,
+                l.adresse,
+                l.region
+            FROM utilisateur u
+            LEFT JOIN etudiant      et ON et.id_utilisateur = u.id_utilisateur
+            LEFT JOIN etablissement e  ON e.id_utilisateur  = u.id_utilisateur
+            LEFT JOIN localisation  l  ON l.id_etablissement = e.id_etablissement
+            WHERE u.id_utilisateur = ?
+        ");
         $stmt->execute([$userId]);
         return $stmt->fetch();
     }
 
     /**
+     * Crée un nouvel utilisateur (admin, étudiant, ou établissement).
+     * @return int L'ID de l'utilisateur créé
+     */
+    public function createUser(string $email, string $password, string $role): int
+    {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO utilisateur (email, mot_de_passe_hash, role) VALUES (?, ?, ?)"
+        );
+        $stmt->execute([$email, $hash, $role]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    /**
+     * Vérifie si un email est déjà utilisé.
+     */
+    public function emailExists(string $email, ?int $excludeId = null): bool
+    {
+        if ($excludeId) {
+            $stmt = $this->pdo->prepare(
+                "SELECT id_utilisateur FROM utilisateur WHERE email = ? AND id_utilisateur != ?"
+            );
+            $stmt->execute([$email, $excludeId]);
+        } else {
+            $stmt = $this->pdo->prepare(
+                "SELECT id_utilisateur FROM utilisateur WHERE email = ?"
+            );
+            $stmt->execute([$email]);
+        }
+        return (bool) $stmt->fetch();
+    }
+
+    /**
+     * Met à jour l'email d'un utilisateur.
+     */
+    public function updateUserEmail(int $userId, string $email): void
+    {
+        $stmt = $this->pdo->prepare(
+            "UPDATE utilisateur SET email = ? WHERE id_utilisateur = ?"
+        );
+        $stmt->execute([$email, $userId]);
+    }
+
+    /**
+     * Met à jour le rôle d'un utilisateur.
+     */
+    public function updateUserRole(int $userId, string $role): void
+    {
+        $stmt = $this->pdo->prepare(
+            "UPDATE utilisateur SET role = ? WHERE id_utilisateur = ?"
+        );
+        $stmt->execute([$role, $userId]);
+    }
+
+    /**
+     * Réinitialise le mot de passe d'un utilisateur.
+     */
+    public function resetUserPassword(int $userId, string $newPassword): void
+    {
+        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $stmt = $this->pdo->prepare(
+            "UPDATE utilisateur SET mot_de_passe_hash = ? WHERE id_utilisateur = ?"
+        );
+        $stmt->execute([$hash, $userId]);
+    }
+
+    /**
      * Supprime un utilisateur (jamais un admin).
-     * La contrainte ON DELETE CASCADE dans la BDD supprime automatiquement :
-     * - Pour un étudiant : son profil, son diplôme, son bac, ses candidatures
-     * - Pour un établissement : son profil, sa localisation, ses offres, ses candidatures
-     * Cela garantit l'intégrité des données sans requêtes supplémentaires.
      */
     public function deleteUser(int $userId): void
     {
-        // La condition AND role != 'admin' est une sécurité supplémentaire :
-        // même si le Controller a déjà vérifié, la BDD est la dernière barrière.
         $stmt = $this->pdo->prepare(
-            "DELETE FROM utilisateur
-             WHERE id_utilisateur = ? AND role != 'admin'"
+            "DELETE FROM utilisateur WHERE id_utilisateur = ? AND role != 'admin'"
         );
         $stmt->execute([$userId]);
+    }
+
+    // ─────────────────────────────────────────────
+    // Gestion des établissements
+    // ─────────────────────────────────────────────
+
+    /**
+     * Récupère tous les établissements avec filtre de recherche.
+     */
+    public function findAllInstitutions(?string $search = null): array
+    {
+        $sql = "
+            SELECT
+                e.id_etablissement,
+                e.nom,
+                e.type,
+                e.site_web,
+                e.description,
+                l.ville,
+                l.region,
+                l.adresse,
+                u.email,
+                u.id_utilisateur,
+                COUNT(off.id_offre_filiere) AS nb_offres
+            FROM etablissement e
+            JOIN utilisateur u           ON u.id_utilisateur    = e.id_utilisateur
+            LEFT JOIN localisation l     ON l.id_etablissement  = e.id_etablissement
+            LEFT JOIN offre_filiere off  ON off.id_etablissement = e.id_etablissement
+            WHERE 1=1
+        ";
+        $params = [];
+
+        if ($search) {
+            $sql .= " AND (e.nom LIKE ? OR u.email LIKE ? OR l.ville LIKE ?)";
+            $like = '%' . $search . '%';
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        $sql .= " GROUP BY e.id_etablissement ORDER BY e.nom ASC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Récupère un établissement par son ID avec toutes ses informations.
+     */
+    public function findInstitutionById(int $id): array|false
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                e.*,
+                l.id_localisation, l.ville, l.adresse, l.region,
+                u.email, u.id_utilisateur,
+                COUNT(DISTINCT off.id_offre_filiere) AS nb_offres,
+                COUNT(DISTINCT c.id_candidature)     AS nb_candidatures
+            FROM etablissement e
+            JOIN utilisateur u           ON u.id_utilisateur    = e.id_utilisateur
+            LEFT JOIN localisation l     ON l.id_etablissement  = e.id_etablissement
+            LEFT JOIN offre_filiere off  ON off.id_etablissement = e.id_etablissement
+            LEFT JOIN candidature c      ON c.id_offre_filiere  = off.id_offre_filiere
+            WHERE e.id_etablissement = ?
+            GROUP BY e.id_etablissement
+        ");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Récupère les formations d'un établissement.
+     */
+    public function findInstitutionPrograms(int $institutionId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                off.id_offre_filiere,
+                off.frais_scolarite,
+                off.place_disponible,
+                off.duree_formation,
+                f.nom AS filiere_nom,
+                f.description AS filiere_description,
+                COUNT(c.id_candidature) AS nb_candidatures
+            FROM offre_filiere off
+            JOIN filiere f ON f.id_filiere = off.id_filiere
+            LEFT JOIN candidature c ON c.id_offre_filiere = off.id_offre_filiere
+            WHERE off.id_etablissement = ?
+            GROUP BY off.id_offre_filiere
+            ORDER BY f.nom ASC
+        ");
+        $stmt->execute([$institutionId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Récupère les candidatures reçues par un établissement.
+     */
+    public function findInstitutionApplications(int $institutionId, int $limit = 10): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                c.id_candidature,
+                c.statut,
+                c.date_candidature,
+                et.nom    AS etudiant_nom,
+                et.prenom AS etudiant_prenom,
+                f.nom     AS filiere_nom
+            FROM candidature c
+            JOIN etudiant      et  ON et.id_etudiant      = c.id_etudiant
+            JOIN offre_filiere off ON off.id_offre_filiere = c.id_offre_filiere
+            JOIN filiere       f   ON f.id_filiere         = off.id_filiere
+            WHERE off.id_etablissement = ?
+            ORDER BY c.date_candidature DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$institutionId, $limit]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Met à jour les informations d'un établissement.
+     */
+    public function updateInstitution(
+        int     $id,
+        string  $nom,
+        string  $type,
+        ?string $siteWeb,
+        ?string $description
+    ): void {
+        $stmt = $this->pdo->prepare("
+            UPDATE etablissement
+            SET nom = ?, type = ?, site_web = ?, description = ?
+            WHERE id_etablissement = ?
+        ");
+        $stmt->execute([$nom, $type, $siteWeb, $description, $id]);
+    }
+
+    /**
+     * Met à jour ou crée la localisation d'un établissement.
+     */
+    public function upsertInstitutionLocation(
+        int     $institutionId,
+        ?string $ville,
+        ?string $adresse,
+        ?string $region
+    ): void {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO localisation (id_etablissement, ville, adresse, region)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE ville = VALUES(ville), adresse = VALUES(adresse), region = VALUES(region)
+        ");
+        $stmt->execute([$institutionId, $ville, $adresse, $region]);
+    }
+
+    /**
+     * Supprime un établissement (et son compte utilisateur via CASCADE).
+     */
+    public function deleteInstitution(int $institutionId): void
+    {
+        // Récupère l'id_utilisateur pour supprimer l'utilisateur (cascade supprimera l'établissement)
+        $stmt = $this->pdo->prepare(
+            "SELECT id_utilisateur FROM etablissement WHERE id_etablissement = ?"
+        );
+        $stmt->execute([$institutionId]);
+        $row = $stmt->fetch();
+        if ($row) {
+            $stmt = $this->pdo->prepare(
+                "DELETE FROM utilisateur WHERE id_utilisateur = ? AND role != 'admin'"
+            );
+            $stmt->execute([$row['id_utilisateur']]);
+        }
     }
 
     // ─────────────────────────────────────────────
@@ -120,43 +431,47 @@ class Admin
     // ─────────────────────────────────────────────
 
     /**
-     * Récupère toutes les filières du catalogue avec le nombre d'offres liées.
-     * COUNT + LEFT JOIN : si une filière n'a aucune offre, elle apparaît quand même
-     * avec nb_offres = 0.
+     * Récupère toutes les filières du catalogue avec recherche.
      */
-    public function findAllPrograms(): array
+    public function findAllPrograms(?string $search = null): array
     {
-        $stmt = $this->pdo->query("
+        $sql = "
             SELECT
                 f.id_filiere,
                 f.nom,
                 f.description,
-                COUNT(off.id_offre_filiere) AS nb_offres
+                COUNT(DISTINCT off.id_offre_filiere) AS nb_offres,
+                COUNT(DISTINCT m.id_debouche)        AS nb_debouches
             FROM filiere f
             LEFT JOIN offre_filiere off ON off.id_filiere = f.id_filiere
-            GROUP BY f.id_filiere
-            ORDER BY f.nom ASC
-        ");
+            LEFT JOIN mener m           ON m.id_filiere   = f.id_filiere
+            WHERE 1=1
+        ";
+        $params = [];
+
+        if ($search) {
+            $sql .= " AND f.nom LIKE ?";
+            $params[] = '%' . $search . '%';
+        }
+
+        $sql .= " GROUP BY f.id_filiere ORDER BY f.nom ASC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
     /**
      * Récupère une filière par son ID.
-     * Utilisé pour pré-remplir le formulaire de modification.
      */
     public function findProgramById(int $id): array|false
     {
-        $stmt = $this->pdo->prepare(
-            "SELECT * FROM filiere WHERE id_filiere = ?"
-        );
+        $stmt = $this->pdo->prepare("SELECT * FROM filiere WHERE id_filiere = ?");
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
 
     /**
      * Ajoute une nouvelle filière dans le catalogue.
-     * Les établissements peuvent ensuite publier des offres sur cette filière.
-     * @return int L'ID de la filière créée
      */
     public function createProgram(string $nom, ?string $description): int
     {
@@ -180,48 +495,147 @@ class Admin
 
     /**
      * Supprime une filière du catalogue.
-     * Attention : la contrainte CASCADE supprime toutes les offres liées,
-     * leurs conditions d'accès, et toutes les candidatures associées.
-     * C'est pourquoi la vue affiche un avertissement avant suppression.
      */
     public function deleteProgram(int $id): void
     {
-        $stmt = $this->pdo->prepare(
-            "DELETE FROM filiere WHERE id_filiere = ?"
-        );
+        $stmt = $this->pdo->prepare("DELETE FROM filiere WHERE id_filiere = ?");
         $stmt->execute([$id]);
     }
 
     // ─────────────────────────────────────────────
-    // Vue globale des établissements
+    // Gestion des formations (offres)
     // ─────────────────────────────────────────────
 
     /**
-     * Récupère tous les établissements avec leur localisation et
-     * le nombre d'offres publiées.
-     * Lecture seule : l'admin observe, il ne modifie pas les profils
-     * des établissements (chaque établissement gère le sien).
+     * Récupère toutes les formations (offres) avec filtres.
      */
-    public function findAllInstitutions(): array
-    {
-        $stmt = $this->pdo->query("
+    public function findAllOffers(
+        ?string $search = null,
+        ?int    $institutionId = null,
+        ?string $level = null
+    ): array {
+        $sql = "
             SELECT
+                off.id_offre_filiere,
+                off.frais_scolarite,
+                off.place_disponible,
+                off.duree_formation,
+                f.nom  AS filiere_nom,
+                f.id_filiere,
                 e.id_etablissement,
-                e.nom,
-                e.type,
-                e.site_web,
-                l.ville,
-                l.region,
-                u.email,
-                COUNT(off.id_offre_filiere) AS nb_offres
-            FROM etablissement e
-            JOIN utilisateur u           ON u.id_utilisateur    = e.id_utilisateur
-            LEFT JOIN localisation l     ON l.id_etablissement  = e.id_etablissement
-            LEFT JOIN offre_filiere off  ON off.id_etablissement = e.id_etablissement
-            GROUP BY e.id_etablissement
-            ORDER BY e.nom ASC
-        ");
+                e.nom  AS etablissement_nom,
+                ca.diplome_requis,
+                ca.serie_bac,
+                ca.moyenne_bac,
+                COUNT(c.id_candidature) AS nb_candidatures
+            FROM offre_filiere off
+            JOIN filiere       f   ON f.id_filiere         = off.id_filiere
+            JOIN etablissement e   ON e.id_etablissement   = off.id_etablissement
+            LEFT JOIN condition_acces ca ON ca.id_offre_filiere = off.id_offre_filiere
+            LEFT JOIN candidature     c  ON c.id_offre_filiere  = off.id_offre_filiere
+            WHERE 1=1
+        ";
+        $params = [];
+
+        if ($search) {
+            $sql .= " AND (f.nom LIKE ? OR e.nom LIKE ?)";
+            $like = '%' . $search . '%';
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        if ($institutionId) {
+            $sql     .= " AND off.id_etablissement = ?";
+            $params[] = $institutionId;
+        }
+
+        if ($level) {
+            $sql     .= " AND ca.diplome_requis LIKE ?";
+            $params[] = '%' . $level . '%';
+        }
+
+        $sql .= " GROUP BY off.id_offre_filiere ORDER BY e.nom ASC, f.nom ASC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Récupère une offre de formation par son ID (détail complet).
+     */
+    public function findOfferById(int $offerId): array|false
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                off.*,
+                f.nom AS filiere_nom,
+                f.description AS filiere_description,
+                e.id_etablissement,
+                e.nom AS etablissement_nom,
+                e.type AS etablissement_type,
+                u.email AS etablissement_email,
+                ca.id_condition_acces,
+                ca.diplome_requis,
+                ca.serie_bac,
+                ca.moyenne_bac,
+                ca.age_max,
+                ca.annee_bac,
+                COUNT(c.id_candidature) AS nb_candidatures
+            FROM offre_filiere off
+            JOIN filiere       f   ON f.id_filiere        = off.id_filiere
+            JOIN etablissement e   ON e.id_etablissement  = off.id_etablissement
+            JOIN utilisateur   u   ON u.id_utilisateur    = e.id_utilisateur
+            LEFT JOIN condition_acces ca ON ca.id_offre_filiere = off.id_offre_filiere
+            LEFT JOIN candidature     c  ON c.id_offre_filiere  = off.id_offre_filiere
+            WHERE off.id_offre_filiere = ?
+            GROUP BY off.id_offre_filiere
+        ");
+        $stmt->execute([$offerId]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Récupère les débouchés d'une filière.
+     */
+    public function findProgramOutlets(int $filiereId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT d.nom, d.description, m.niveau_etude
+            FROM mener m
+            JOIN debouche d ON d.id_debouche = m.id_debouche
+            WHERE m.id_filiere = ?
+            ORDER BY d.nom ASC
+        ");
+        $stmt->execute([$filiereId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Met à jour une offre de formation (admin peut modifier les infos de base).
+     */
+    public function updateOffer(
+        int    $offerId,
+        float  $fraisScolarite,
+        int    $placeDisponible,
+        string $dureeFormation
+    ): void {
+        $stmt = $this->pdo->prepare("
+            UPDATE offre_filiere
+            SET frais_scolarite = ?, place_disponible = ?, duree_formation = ?
+            WHERE id_offre_filiere = ?
+        ");
+        $stmt->execute([$fraisScolarite, $placeDisponible, $dureeFormation, $offerId]);
+    }
+
+    /**
+     * Supprime une offre de formation.
+     */
+    public function deleteOffer(int $offerId): void
+    {
+        $stmt = $this->pdo->prepare(
+            "DELETE FROM offre_filiere WHERE id_offre_filiere = ?"
+        );
+        $stmt->execute([$offerId]);
     }
 
     // ─────────────────────────────────────────────
@@ -229,25 +643,35 @@ class Admin
     // ─────────────────────────────────────────────
 
     /**
-     * Récupère toutes les candidatures de la plateforme.
-     * Supporte un filtre optionnel par statut (même logique que pour l'établissement,
-     * mais sans restriction d'établissement — l'admin voit tout).
-     * @param string|null $status Filtre : 'en_attente' | 'acceptee' | 'refusee' | 'annulee' | null = tous
+     * Récupère toutes les candidatures avec filtres multiples.
      */
-    public function findAllApplications(?string $status = null): array
-    {
+    public function findAllApplications(
+        ?string $status = null,
+        ?int    $institutionId = null,
+        ?int    $offerId = null,
+        ?string $search = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null
+    ): array {
         $sql = "
             SELECT
                 c.id_candidature,
                 c.statut,
                 c.date_candidature,
                 c.date_traitement,
+                c.message,
+                et.id_etudiant,
                 et.nom    AS etudiant_nom,
                 et.prenom AS etudiant_prenom,
+                eu.email  AS etudiant_email,
                 f.nom     AS filiere_nom,
-                e.nom     AS etablissement_nom
+                e.id_etablissement,
+                e.nom     AS etablissement_nom,
+                off.id_offre_filiere,
+                off.duree_formation
             FROM candidature c
             JOIN etudiant      et  ON et.id_etudiant      = c.id_etudiant
+            JOIN utilisateur   eu  ON eu.id_utilisateur   = et.id_utilisateur
             JOIN offre_filiere off ON off.id_offre_filiere = c.id_offre_filiere
             JOIN filiere       f   ON f.id_filiere         = off.id_filiere
             JOIN etablissement e   ON e.id_etablissement   = off.id_etablissement
@@ -255,16 +679,138 @@ class Admin
         ";
         $params = [];
 
-        // WHERE 1=1 : clause toujours vraie, permet d'enchaîner les AND conditionnels
-        // sans vérifier si c'est le premier filtre ou pas
-        if ($status !== null) {
+        if ($status !== null && $status !== 'tous') {
             $sql     .= " AND c.statut = ?";
             $params[] = $status;
+        }
+
+        if ($institutionId) {
+            $sql     .= " AND off.id_etablissement = ?";
+            $params[] = $institutionId;
+        }
+
+        if ($offerId) {
+            $sql     .= " AND c.id_offre_filiere = ?";
+            $params[] = $offerId;
+        }
+
+        if ($search) {
+            $sql .= " AND (et.nom LIKE ? OR et.prenom LIKE ? OR eu.email LIKE ? OR f.nom LIKE ? OR e.nom LIKE ?)";
+            $like = '%' . $search . '%';
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        if ($dateFrom) {
+            $sql     .= " AND DATE(c.date_candidature) >= ?";
+            $params[] = $dateFrom;
+        }
+
+        if ($dateTo) {
+            $sql     .= " AND DATE(c.date_candidature) <= ?";
+            $params[] = $dateTo;
         }
 
         $sql .= " ORDER BY c.date_candidature DESC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Récupère une candidature par son ID (détail complet).
+     */
+    public function findApplicationById(int $id): array|false
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                c.*,
+                et.nom          AS etudiant_nom,
+                et.prenom       AS etudiant_prenom,
+                et.telephone    AS etudiant_telephone,
+                et.date_de_naissance,
+                eu.email        AS etudiant_email,
+                f.nom           AS filiere_nom,
+                f.description   AS filiere_description,
+                f.id_filiere,
+                e.id_etablissement,
+                e.nom           AS etablissement_nom,
+                e.type          AS etablissement_type,
+                eu2.email       AS etablissement_email,
+                off.duree_formation,
+                off.frais_scolarite,
+                off.place_disponible,
+                ca.diplome_requis,
+                ca.serie_bac,
+                ca.moyenne_bac
+            FROM candidature c
+            JOIN etudiant      et  ON et.id_etudiant       = c.id_etudiant
+            JOIN utilisateur   eu  ON eu.id_utilisateur    = et.id_utilisateur
+            JOIN offre_filiere off ON off.id_offre_filiere  = c.id_offre_filiere
+            JOIN filiere       f   ON f.id_filiere          = off.id_filiere
+            JOIN etablissement e   ON e.id_etablissement    = off.id_etablissement
+            JOIN utilisateur   eu2 ON eu2.id_utilisateur   = e.id_utilisateur
+            LEFT JOIN condition_acces ca ON ca.id_offre_filiere = off.id_offre_filiere
+            WHERE c.id_candidature = ?
+        ");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Statistiques des candidatures par statut.
+     */
+    public function getApplicationStats(): array
+    {
+        $stmt = $this->pdo->query("
+            SELECT statut, COUNT(*) AS total
+            FROM candidature
+            GROUP BY statut
+        ");
+        $rows = $stmt->fetchAll();
+        $stats = ['en_attente' => 0, 'acceptee' => 0, 'refusee' => 0, 'annulee' => 0];
+        foreach ($rows as $row) {
+            $stats[$row['statut']] = (int) $row['total'];
+        }
+        return $stats;
+    }
+
+    /**
+     * Récupère tous les établissements (pour les selects/filtres).
+     */
+    public function getInstitutionsForSelect(): array
+    {
+        $stmt = $this->pdo->query("SELECT id_etablissement, nom FROM etablissement ORDER BY nom ASC");
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Récupère toutes les offres d'un établissement (pour les selects/filtres).
+     */
+    public function getOffersForSelect(?int $institutionId = null): array
+    {
+        if ($institutionId) {
+            $stmt = $this->pdo->prepare("
+                SELECT off.id_offre_filiere, f.nom AS filiere_nom, e.nom AS etablissement_nom
+                FROM offre_filiere off
+                JOIN filiere f ON f.id_filiere = off.id_filiere
+                JOIN etablissement e ON e.id_etablissement = off.id_etablissement
+                WHERE off.id_etablissement = ?
+                ORDER BY f.nom ASC
+            ");
+            $stmt->execute([$institutionId]);
+        } else {
+            $stmt = $this->pdo->query("
+                SELECT off.id_offre_filiere, f.nom AS filiere_nom, e.nom AS etablissement_nom
+                FROM offre_filiere off
+                JOIN filiere f ON f.id_filiere = off.id_filiere
+                JOIN etablissement e ON e.id_etablissement = off.id_etablissement
+                ORDER BY e.nom ASC, f.nom ASC
+            ");
+        }
         return $stmt->fetchAll();
     }
 }

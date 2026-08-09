@@ -2,24 +2,13 @@
 // ═══════════════════════════════════════════════
 // ROUTEUR — Fait le lien entre l'URL (?route=...) et le Controller à exécuter
 // ═══════════════════════════════════════════════
-//
-// Les chemins d'URL (clés du tableau) ne sont volontairement pas modifiés :
-// ils font partie du contrat d'interface du site (liens déjà en place dans les vues)
-// et ne doivent pas changer pour ne pas casser la navigation existante.
-// Seuls les noms de Controllers/méthodes (le code) sont traduits en anglais.
 
-// Charger les Controllers (noms de classes et de fichiers traduits en anglais)
 require_once __DIR__ . "/app/controllers/AuthController.php";
 require_once __DIR__ . "/app/controllers/StudentController.php";
 require_once __DIR__ . "/app/controllers/InstitutionController.php";
 require_once __DIR__ . "/app/controllers/ProgramController.php";
 require_once __DIR__ . "/app/controllers/OutletController.php";
-require_once __DIR__ . "/app/controllers/AuthController.php";
-require_once __DIR__ . "/app/controllers/StudentController.php";
-require_once __DIR__ . "/app/controllers/InstitutionController.php";
-require_once __DIR__ . "/app/controllers/ProgramController.php";
-require_once __DIR__ . "/app/controllers/OutletController.php";
-require_once __DIR__ . "/app/controllers/AdminController.php";   // ← AJOUTER
+require_once __DIR__ . "/app/controllers/AdminController.php";
 
 // Lecture du paramètre ?route=... dans l'URL, "home" par défaut
 $route = filter_input(INPUT_GET, 'route', FILTER_SANITIZE_SPECIAL_CHARS) ?: 'home';
@@ -39,7 +28,7 @@ $routes = [
     'student/home'                 => ['StudentController', 'home'],
     'student/profile'              => ['StudentController', 'profile'],
     'student/institutions'         => ['StudentController', 'institutions'],
-    'student/offer/details'         => ['StudentController', 'offerDetails'],          // ← NOUVEAU
+    'student/offer/details'        => ['StudentController', 'offerDetails'],
     'student/recommendations'      => ['StudentController', 'recommendations'],
     'student/applications'         => ['StudentController', 'applications'],
     'student/application/submit'   => ['StudentController', 'submitApplication'],
@@ -59,16 +48,39 @@ $routes = [
     'institution/applications'        => ['InstitutionController', 'applications'],
     'institution/application/process' => ['InstitutionController', 'processApplication'],
 
-    //  Espace administrateur // ← AJOUTER (tout ce bloc)
-    'admin/home'             => ['AdminController', 'home'],
-    'admin/users'            => ['AdminController', 'users'],
-    'admin/user/delete'      => ['AdminController', 'deleteUser'],
-    'admin/programs'         => ['AdminController', 'programs'],
-    'admin/program/create'   => ['AdminController', 'createProgram'],
-    'admin/program/edit'     => ['AdminController', 'editProgram'],
-    'admin/program/delete'   => ['AdminController', 'deleteProgram'],
-    'admin/institutions'     => ['AdminController', 'institutions'],
-    'admin/applications'     => ['AdminController', 'applications'],
+    // ─── Espace administrateur ───────────────────
+
+    // 1. Tableau de bord
+    'admin/home'                   => ['AdminController', 'home'],
+
+    // 2. Gestion des utilisateurs
+    'admin/users'                  => ['AdminController', 'users'],
+    'admin/user/view'              => ['AdminController', 'viewUser'],
+    'admin/user/add'               => ['AdminController', 'addUser'],
+    'admin/user/edit'              => ['AdminController', 'editUser'],
+    'admin/user/delete'            => ['AdminController', 'deleteUser'],
+
+    // 3. Gestion des établissements
+    'admin/institutions'           => ['AdminController', 'institutions'],
+    'admin/institution/view'       => ['AdminController', 'viewInstitution'],
+    'admin/institution/edit'       => ['AdminController', 'editInstitution'],
+    'admin/institution/delete'     => ['AdminController', 'deleteInstitution'],
+
+    // 4. Gestion des formations (offres de filières)
+    'admin/formations'             => ['AdminController', 'formations'],
+    'admin/formation/view'         => ['AdminController', 'viewFormation'],
+    'admin/formation/edit'         => ['AdminController', 'editFormation'],
+    'admin/formation/delete'       => ['AdminController', 'deleteFormation'],
+
+    // Catalogue de filières (référentiel)
+    'admin/programs'               => ['AdminController', 'programs'],
+    'admin/program/create'         => ['AdminController', 'createProgram'],
+    'admin/program/edit'           => ['AdminController', 'editProgram'],
+    'admin/program/delete'         => ['AdminController', 'deleteProgram'],
+
+    // 5. Gestion des candidatures
+    'admin/applications'           => ['AdminController', 'applications'],
+    'admin/application/view'       => ['AdminController', 'viewApplication'],
 ];
 
 if (isset($routes[$route])) {
@@ -77,6 +89,9 @@ if (isset($routes[$route])) {
     $controller->$method();
 } else {
     http_response_code(404);
-    echo "<h1>404 - Page introuvable</h1>";
+    echo "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>404 — Mpandova</title></head>";
+    echo "<body style='font-family:sans-serif;text-align:center;padding:60px'>";
+    echo "<h1>404 — Page introuvable</h1>";
     echo "<a href='index.php'>Retour à l'accueil</a>";
+    echo "</body></html>";
 }
