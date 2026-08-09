@@ -20,7 +20,7 @@ $actionUrl = $modeEdition
                     Catalogue des filières
                 </h1>
                 <p class="mt-1 text-sm text-slate-500">
-                    <?= count($filieres) ?> filière(s) dans le catalogue de référence
+                    <?= count($filieres) ?> <?= count($filieres) > 1 ? 'filières' : 'filière ' ?>dans le catalogue de référence
                 </p>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -48,7 +48,7 @@ $actionUrl = $modeEdition
                 >
             </div>
             <button type="submit"
-                    class="rounded-lg bg-[#071d3b] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0f2d54]">
+                    class="rounded-lg bg-[#f1b456] px-4 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                 Rechercher
             </button>
             <?php if ($search): ?>

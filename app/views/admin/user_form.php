@@ -1,8 +1,8 @@
 <?php
 // $modeEdition : null (ajout) | tableau (modification)
-$isEdit  = !is_null($modeEdition);
-$title   = $isEdit ? 'Modifier l\'utilisateur' : 'Ajouter un utilisateur';
-$action  = $isEdit ? 'index.php?route=admin/user/edit' : 'index.php?route=admin/user/add';
+$isEdit = !is_null($modeEdition);
+$title  = $isEdit ? "Modifier l'utilisateur" : 'Ajouter un utilisateur';
+$action = $isEdit ? 'index.php?route=admin/user/edit' : 'index.php?route=admin/user/add';
 
 $email = htmlspecialchars($modeEdition['email'] ?? '');
 $role  = $modeEdition['role'] ?? 'etudiant';
@@ -27,8 +27,8 @@ $role  = $modeEdition['role'] ?? 'etudiant';
 
         <!-- Règle importante -->
         <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-            <strong>⚠️ Règle de sécurité :</strong> La création d'un compte <strong>Administrateur</strong> n'est possible
-            que depuis cet espace. L'inscription publique est limitée aux rôles Étudiant et Établissement.
+            <strong>Règle de sécurité :</strong> La création d'un compte <strong>Administrateur</strong> n'est possible
+            que depuis cet espace. L'inscription publique est limitée aux rôles Etudiant et Etablissement.
         </div>
 
         <form method="POST" action="<?= $action ?>" novalidate class="mt-6 space-y-5">
@@ -64,9 +64,9 @@ $role  = $modeEdition['role'] ?? 'etudiant';
                     required
                     class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30"
                 >
-                    <option value="etudiant"       <?= $role === 'etudiant'       ? 'selected' : '' ?>>Étudiant</option>
-                    <option value="etablissement"  <?= $role === 'etablissement'  ? 'selected' : '' ?>>Établissement</option>
-                    <option value="admin"          <?= $role === 'admin'          ? 'selected' : '' ?>>Administrateur</option>
+                    <option value="etudiant"      <?= $role === 'etudiant'      ? 'selected' : '' ?>>Etudiant</option>
+                    <option value="etablissement" <?= $role === 'etablissement' ? 'selected' : '' ?>>Etablissement</option>
+                    <option value="admin"         <?= $role === 'admin'         ? 'selected' : '' ?>>Administrateur</option>
                 </select>
             </div>
 

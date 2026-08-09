@@ -14,7 +14,7 @@
                     Gestion des utilisateurs
                 </h1>
                 <p class="mt-1 text-sm text-slate-500">
-                    <?= count($utilisateurs) ?> compte(s) trouvé(s)
+                    <?= count($utilisateurs) ?> <?= count($utilisateurs) > 1 ? 'utilisateurs trouvés' : 'utilisateur trouvé' ?>
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
@@ -37,20 +37,20 @@
                     type="text"
                     name="q"
                     value="<?= htmlspecialchars($search) ?>"
-                    placeholder="Rechercher par nom, prénom ou email…"
+                    placeholder="Rechercher par nom, prénom ou email..."
                     class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30"
                 >
             </div>
             <div>
                 <select name="role" class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-[#f1b456]">
-                    <option value="tous"          <?= $roleFiltre === 'tous'          ? 'selected' : '' ?>>Tous les rôles</option>
-                    <option value="etudiant"       <?= $roleFiltre === 'etudiant'       ? 'selected' : '' ?>>Étudiant</option>
-                    <option value="etablissement"  <?= $roleFiltre === 'etablissement'  ? 'selected' : '' ?>>Établissement</option>
-                    <option value="admin"          <?= $roleFiltre === 'admin'          ? 'selected' : '' ?>>Administrateur</option>
+                    <option value="tous"         <?= $roleFiltre === 'tous'         ? 'selected' : '' ?>>Tous les rôles</option>
+                    <option value="etudiant"      <?= $roleFiltre === 'etudiant'      ? 'selected' : '' ?>>Etudiant</option>
+                    <option value="etablissement" <?= $roleFiltre === 'etablissement' ? 'selected' : '' ?>>Etablissement</option>
+                    <option value="admin"         <?= $roleFiltre === 'admin'         ? 'selected' : '' ?>>Administrateur</option>
                 </select>
             </div>
             <button type="submit"
-                    class="rounded-lg bg-[#071d3b] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0f2d54]">
+                    class="rounded-lg bg-[#f1b456] px-4 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                 Rechercher
             </button>
             <?php if ($search || $roleFiltre !== 'tous'): ?>
@@ -65,10 +65,10 @@
         <div class="mt-4 flex flex-wrap gap-2">
             <?php
             $onglets = [
-                'tous'         => ['label' => 'Tous', 'color' => 'bg-[#071d3b] text-white', 'border' => ''],
-                'etudiant'     => ['label' => 'Étudiants', 'color' => 'bg-sky-100 text-sky-800', 'border' => 'border-sky-200'],
-                'etablissement'=> ['label' => 'Établissements', 'color' => 'bg-emerald-100 text-emerald-800', 'border' => 'border-emerald-200'],
-                'admin'        => ['label' => 'Admins', 'color' => 'bg-violet-100 text-violet-800', 'border' => 'border-violet-200'],
+                'tous'          => ['label' => 'Tous',            'color' => 'bg-[#f1b456] px-4 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]', 'border' => ''],
+                'etudiant'      => ['label' => 'Etudiants',       'color' => 'bg-sky-100 text-sky-800', 'border' => 'border-sky-200'],
+                'etablissement' => ['label' => 'Etablissements',  'color' => 'bg-emerald-100 text-emerald-800', 'border' => 'border-emerald-200'],
+                'admin'         => ['label' => 'Admins',          'color' => 'bg-violet-100 text-violet-800', 'border' => 'border-violet-200'],
             ];
             foreach ($onglets as $val => $cfg):
                 $isActif = $roleFiltre === $val;
@@ -86,10 +86,10 @@
         <!-- Liste des utilisateurs -->
         <?php if (empty($utilisateurs)): ?>
             <div class="py-16 text-center text-slate-600">
-                <p class="text-4xl">👤</p>
-                <p class="mt-3 text-sm">Aucun utilisateur trouvé.</p>
+                <p class="text-sm font-semibold">Aucun utilisateur trouvé.</p>
                 <?php if ($search || $roleFiltre !== 'tous'): ?>
-                    <a href="index.php?route=admin/users" class="mt-2 inline-block text-sm font-semibold text-[#071d3b] hover:underline">
+                    <a href="index.php?route=admin/users"
+                       class="mt-2 inline-block text-sm font-semibold text-[#071d3b] hover:underline">
                         Voir tous les utilisateurs
                     </a>
                 <?php endif; ?>
@@ -99,7 +99,7 @@
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nom / Organisme</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nom</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Email</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Rôle</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">ID</th>
@@ -111,11 +111,11 @@
                             if ($u['role'] === 'etudiant') {
                                 $nom        = htmlspecialchars(($u['etudiant_prenom'] ?? '') . ' ' . ($u['etudiant_nom'] ?? ''));
                                 $badgeClass = 'bg-sky-100 text-sky-800 border-sky-200';
-                                $badgeLabel = 'Étudiant';
+                                $badgeLabel = 'Etudiant';
                             } elseif ($u['role'] === 'etablissement') {
                                 $nom        = htmlspecialchars($u['etablissement_nom'] ?? '—');
                                 $badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-                                $badgeLabel = 'Établissement';
+                                $badgeLabel = 'Etablissement';
                             } else {
                                 $nom        = 'Administrateur';
                                 $badgeClass = 'bg-violet-100 text-violet-800 border-violet-200';
@@ -138,16 +138,14 @@
                                             Voir
                                         </a>
                                         <a href="index.php?route=admin/user/edit&id=<?= $u['id_utilisateur'] ?>"
-                                           class="rounded-lg border border-[#f1b456]/50 bg-[#f1b456]/10 px-3 py-1 text-xs font-semibold text-[#8a5a10] hover:bg-[#f1b456]/25">
+                                           class="rounded-lg border border-[#f1b456]/50 bg-[#f1b456]/15 px-3 py-1 text-xs font-semibold text-[#8a5a10] hover:bg-[#f1b456]/25">
                                             Modifier
                                         </a>
-                                        <?php if ($u['role'] !== 'admin'): ?>
-                                            <a href="index.php?route=admin/user/delete&id=<?= $u['id_utilisateur'] ?>"
-                                               onclick="return confirm('Supprimer le compte de <?= addslashes($nom) ?> ?\n\nToutes les données associées seront supprimées. Cette action est irréversible.')"
-                                               class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100">
-                                                Supprimer
-                                            </a>
-                                        <?php endif; ?>
+                                        <a href="index.php?route=admin/user/delete&id=<?= $u['id_utilisateur'] ?>"
+                                           onclick="return confirm('Supprimer ce compte ? Cette action est irréversible.')"
+                                           class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100">
+                                            Supprimer
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

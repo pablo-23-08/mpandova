@@ -12,7 +12,7 @@
                     Gestion des établissements
                 </h1>
                 <p class="mt-1 text-sm text-slate-500">
-                    <?= count($etablissements) ?> établissement(s) sur la plateforme
+                    <?= count($etablissements) ?> <?= count($etablissements) > 1 ? 'établissements' : 'établissement' ?> sur la plateforme
                 </p>
             </div>
             <a href="index.php?route=admin/home"
@@ -29,12 +29,12 @@
                     type="text"
                     name="q"
                     value="<?= htmlspecialchars($search) ?>"
-                    placeholder="Rechercher un établissement par nom, email ou ville…"
+                    placeholder="Rechercher un établissement par nom, email ou ville..."
                     class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30"
                 >
             </div>
             <button type="submit"
-                    class="rounded-lg bg-[#071d3b] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0f2d54]">
+                    class="rounded-lg bg-[#f1b456] px-4 py-2 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]">
                 Rechercher
             </button>
             <?php if ($search): ?>
@@ -48,15 +48,20 @@
         <!-- Liste des établissements -->
         <?php if (empty($etablissements)): ?>
             <div class="py-16 text-center text-slate-600">
-                <p class="text-4xl">🏛️</p>
-                <p class="mt-3 text-sm">Aucun établissement trouvé.</p>
+                <p class="text-sm font-semibold">Aucun établissement trouvé.</p>
+                <?php if ($search): ?>
+                    <a href="index.php?route=admin/institutions"
+                       class="mt-2 inline-block text-sm font-semibold text-[#071d3b] hover:underline">
+                        Voir tous les établissements
+                    </a>
+                <?php endif; ?>
             </div>
         <?php else: ?>
             <div class="mt-6 overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Établissement</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Etablissement</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Email</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ville</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Formations</th>
@@ -84,13 +89,8 @@
                                             Voir
                                         </a>
                                         <a href="index.php?route=admin/institution/edit&id=<?= $e['id_etablissement'] ?>"
-                                           class="rounded-lg border border-[#f1b456]/50 bg-[#f1b456]/10 px-3 py-1 text-xs font-semibold text-[#8a5a10] hover:bg-[#f1b456]/25">
+                                           class="rounded-lg border border-[#f1b456]/50 bg-[#f1b456]/15 px-3 py-1 text-xs font-semibold text-[#8a5a10] hover:bg-[#f1b456]/25">
                                             Modifier
-                                        </a>
-                                        <a href="index.php?route=admin/institution/delete&id=<?= $e['id_etablissement'] ?>"
-                                           onclick="return confirm('Supprimer l\'établissement « <?= addslashes(htmlspecialchars($e['nom'])) ?> » ?\n\nToutes ses formations et candidatures seront également supprimées. Cette action est IRRÉVERSIBLE.')"
-                                           class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100">
-                                            Supprimer
                                         </a>
                                     </div>
                                 </td>

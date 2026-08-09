@@ -27,7 +27,7 @@ $badgeLabel = $badgeLabels[$candidature['statut']] ?? $candidature['statut'];
                     Détail de la candidature
                 </h1>
                 <p class="mt-1 text-xs text-slate-400">
-                    ID #<?= $candidature['id_candidature'] ?> ·
+                    ID #<?= $candidature['id_candidature'] ?> &middot;
                     Soumise le <?= date('d/m/Y à H:i', strtotime($candidature['date_candidature'])) ?>
                 </p>
             </div>
@@ -45,11 +45,9 @@ $badgeLabel = $badgeLabels[$candidature['statut']] ?? $candidature['statut'];
 
         <div class="mt-8 grid gap-6 lg:grid-cols-2">
 
-            <!-- Étudiant -->
+            <!-- Etudiant -->
             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">
-                    👤 Étudiant
-                </h2>
+                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">Etudiant</h2>
                 <dl class="space-y-3 text-sm">
                     <div>
                         <dt class="font-semibold text-slate-600">Nom complet :</dt>
@@ -78,9 +76,7 @@ $badgeLabel = $badgeLabels[$candidature['statut']] ?? $candidature['statut'];
 
             <!-- Formation demandée -->
             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">
-                    📚 Formation demandée
-                </h2>
+                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">Formation demandée</h2>
                 <dl class="space-y-3 text-sm">
                     <div>
                         <dt class="font-semibold text-slate-600">Filière :</dt>
@@ -111,94 +107,75 @@ $badgeLabel = $badgeLabels[$candidature['statut']] ?? $candidature['statut'];
                     </div>
                     <?php endif; ?>
                 </dl>
-                <div class="mt-4 border-t border-slate-200 pt-3">
-                    <a href="index.php?route=admin/formation/view&id=<?= $candidature['id_offre_filiere'] ?>"
-                       class="text-xs font-semibold text-[#071d3b] hover:text-[#f1b456]">
-                        → Voir la formation
-                    </a>
-                </div>
             </div>
 
-            <!-- Établissement -->
+            <!-- Etablissement -->
             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">
-                    🏛️ Établissement
-                </h2>
+                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">Etablissement</h2>
                 <dl class="space-y-3 text-sm">
                     <div>
                         <dt class="font-semibold text-slate-600">Nom :</dt>
                         <dd class="mt-1 text-slate-800"><?= htmlspecialchars($candidature['etablissement_nom']) ?></dd>
                     </div>
+                    <?php if (!empty($candidature['etablissement_ville'])): ?>
                     <div>
-                        <dt class="font-semibold text-slate-600">Type :</dt>
-                        <dd class="mt-1 text-slate-800"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $candidature['etablissement_type']))) ?></dd>
+                        <dt class="font-semibold text-slate-600">Ville :</dt>
+                        <dd class="mt-1 text-slate-800"><?= htmlspecialchars($candidature['etablissement_ville']) ?></dd>
                     </div>
+                    <?php endif; ?>
+                    <?php if (!empty($candidature['etablissement_email'])): ?>
                     <div>
                         <dt class="font-semibold text-slate-600">Email :</dt>
                         <dd class="mt-1 text-slate-800"><?= htmlspecialchars($candidature['etablissement_email']) ?></dd>
                     </div>
-                </dl>
-                <div class="mt-4 border-t border-slate-200 pt-3">
-                    <a href="index.php?route=admin/institution/view&id=<?= $candidature['id_etablissement'] ?>"
-                       class="text-xs font-semibold text-[#071d3b] hover:text-[#f1b456]">
-                        → Voir l'établissement
-                    </a>
-                </div>
-            </div>
-
-            <!-- Statut et dates -->
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">
-                    📋 Statut & Dates
-                </h2>
-                <dl class="space-y-3 text-sm">
-                    <div>
-                        <dt class="font-semibold text-slate-600">Statut actuel :</dt>
-                        <dd class="mt-1">
-                            <span class="inline-block rounded-lg border px-3 py-1 text-xs font-bold <?= $badgeClass ?>">
-                                <?= $badgeLabel ?>
-                            </span>
-                        </dd>
-                    </div>
-                    <div>
-                        <dt class="font-semibold text-slate-600">Date de candidature :</dt>
-                        <dd class="mt-1 text-slate-800">
-                            <?= date('d/m/Y à H:i', strtotime($candidature['date_candidature'])) ?>
-                        </dd>
-                    </div>
-                    <?php if (!empty($candidature['date_traitement'])): ?>
-                    <div>
-                        <dt class="font-semibold text-slate-600">Date de traitement :</dt>
-                        <dd class="mt-1 text-slate-800">
-                            <?= date('d/m/Y à H:i', strtotime($candidature['date_traitement'])) ?>
-                        </dd>
-                    </div>
                     <?php endif; ?>
                 </dl>
-                <div class="mt-4 rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-800">
-                    <strong>ℹ️ Rôle de l'admin :</strong> L'administrateur supervise les candidatures.
-                    Le traitement (acceptation/refus) est de la responsabilité de l'établissement.
-                </div>
+            </div>
+
+            <!-- Statut et actions -->
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-[#071d3b]">Traitement</h2>
+                <p class="mb-4 text-sm text-slate-600">
+                    Statut actuel :
+                    <span class="ml-1 inline-block rounded-lg border px-2 py-0.5 text-xs font-semibold <?= $badgeClass ?>">
+                        <?= $badgeLabel ?>
+                    </span>
+                </p>
+                <form method="POST" action="index.php?route=admin/application/update" class="space-y-3">
+                    <input type="hidden" name="id_candidature" value="<?= $candidature['id_candidature'] ?>">
+                    <div>
+                        <label for="statut" class="mb-2 block text-sm font-semibold text-[#071d3b]">
+                            Changer le statut
+                        </label>
+                        <select
+                            id="statut"
+                            name="statut"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-[#f1b456] focus:ring-2 focus:ring-[#f1b456]/30"
+                        >
+                            <option value="en_attente" <?= $candidature['statut'] === 'en_attente' ? 'selected' : '' ?>>En attente</option>
+                            <option value="acceptee"   <?= $candidature['statut'] === 'acceptee'   ? 'selected' : '' ?>>Acceptée</option>
+                            <option value="refusee"    <?= $candidature['statut'] === 'refusee'    ? 'selected' : '' ?>>Refusée</option>
+                            <option value="annulee"    <?= $candidature['statut'] === 'annulee'    ? 'selected' : '' ?>>Annulée</option>
+                        </select>
+                    </div>
+                    <button
+                        type="submit"
+                        class="rounded-lg bg-[#f1b456] px-5 py-2.5 text-sm font-bold text-[#071d3b] hover:bg-[#e4a744]"
+                    >
+                        Enregistrer le statut
+                    </button>
+                </form>
             </div>
 
         </div>
 
-        <!-- Message de l'étudiant -->
-        <?php if (!empty($candidature['message'])): ?>
+        <!-- Message de motivation -->
+        <?php if (!empty($candidature['message_motivation'])): ?>
         <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h2 class="mb-3 text-sm font-bold uppercase tracking-wide text-[#071d3b]">
-                💬 Message de l'étudiant
-            </h2>
-            <div class="rounded-xl border border-slate-200 bg-white p-4 text-sm leading-relaxed text-slate-700">
-                <?= nl2br(htmlspecialchars($candidature['message'])) ?>
-            </div>
-        </div>
-        <?php else: ?>
-        <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h2 class="mb-3 text-sm font-bold uppercase tracking-wide text-[#071d3b]">
-                💬 Message de l'étudiant
-            </h2>
-            <p class="text-sm text-slate-500 italic">Aucun message joint à cette candidature.</p>
+            <h2 class="mb-3 text-sm font-bold uppercase tracking-wide text-[#071d3b]">Message de motivation</h2>
+            <p class="text-sm leading-relaxed text-slate-700">
+                <?= nl2br(htmlspecialchars($candidature['message_motivation'])) ?>
+            </p>
         </div>
         <?php endif; ?>
 
