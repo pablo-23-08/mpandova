@@ -191,6 +191,31 @@ class Program
         return $stmt->fetchAll();
     }
 
+    /**
+     * Récupère le détail complet d'une offre pour la fiche filière côté étudiant :
+     * filière, établissement, localisation et conditions d'accès.
+     */
+    public function findOfferDetailsForStudent(int $offerId): array|false
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                off.*,
+                f.nom AS filiere_nom, f.description AS filiere_description,
+                e.id_etablissement, e.nom AS etablissement_nom, e.type AS etablissement_type,
+                e.site_web, e.description AS etablissement_description,
+                l.ville, l.adresse, l.region,
+                ca.serie_bac, ca.moyenne_bac, ca.age_max, ca.diplome_requis, ca.annee_bac
+            FROM offre_filiere off
+            JOIN filiere f ON f.id_filiere = off.id_filiere
+            JOIN etablissement e ON e.id_etablissement = off.id_etablissement
+            LEFT JOIN localisation l ON l.id_etablissement = e.id_etablissement
+            LEFT JOIN condition_acces ca ON ca.id_offre_filiere = off.id_offre_filiere
+            WHERE off.id_offre_filiere = ?
+        ");
+        $stmt->execute([$offerId]);
+        return $stmt->fetch();
+    }
+
     // ─────────────────────────────────────────────
     // RECOMMANDATIONS — Moteur de score
     // ─────────────────────────────────────────────

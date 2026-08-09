@@ -24,28 +24,29 @@ $routes = [
     // - Authentification -
     'auth/login'                  => ['AuthController', 'login'],
     'auth/logout'                 => ['AuthController', 'logout'],
-    'auth/register'                => ['AuthController', 'register'],
+    'auth/register'               => ['AuthController', 'register'],
     'auth/student/register'       => ['AuthController', 'registerStudent'],
-    'auth/institution/register'  => ['AuthController', 'registerInstitution'],
+    'auth/institution/register'   => ['AuthController', 'registerInstitution'],
 
     // - Espace étudiant -
     'student/home'                 => ['StudentController', 'home'],
-    'student/profile'                  => ['StudentController', 'profile'],
-    'student/institutions'          => ['StudentController', 'institutions'],
-    'student/recommendations'         => ['StudentController', 'recommendations'],
-    'student/applications'            => ['StudentController', 'applications'],
+    'student/profile'              => ['StudentController', 'profile'],
+    'student/institutions'         => ['StudentController', 'institutions'],
+    'student/offer/details'         => ['StudentController', 'offerDetails'],          // ← NOUVEAU
+    'student/recommendations'      => ['StudentController', 'recommendations'],
+    'student/applications'         => ['StudentController', 'applications'],
     'student/application/submit'   => ['StudentController', 'submitApplication'],
-    'student/application/cancel'     => ['StudentController', 'cancelApplication'],
+    'student/application/cancel'   => ['StudentController', 'cancelApplication'],
 
     // - Espace établissement -
-    'institution/home'            => ['InstitutionController', 'home'],
+    'institution/home'                => ['InstitutionController', 'home'],
     'institution/profile'             => ['InstitutionController', 'profile'],
-    'institution/programs'           => ['ProgramController', 'index'],
-    'institution/program/create'    => ['ProgramController', 'create'],
-    'institution/program/edit'   => ['ProgramController', 'edit'],
-    'institution/program/delete'  => ['ProgramController', 'delete'],
-    'institution/applications'       => ['InstitutionController', 'applications'],
-    'institution/application/process'=> ['InstitutionController', 'processApplication'],
+    'institution/programs'            => ['ProgramController', 'index'],
+    'institution/program/create'      => ['ProgramController', 'create'],
+    'institution/program/edit'        => ['ProgramController', 'edit'],
+    'institution/program/delete'      => ['ProgramController', 'delete'],
+    'institution/applications'        => ['InstitutionController', 'applications'],
+    'institution/application/process' => ['InstitutionController', 'processApplication'],
 ];
 
 if (isset($routes[$route])) {

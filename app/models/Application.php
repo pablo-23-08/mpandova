@@ -48,6 +48,21 @@ class Application
     }
 
     /**
+     * Récupère la candidature d'un étudiant pour une offre précise (si elle existe).
+     * Utilisé sur la fiche détaillée d'une filière pour afficher le statut et le
+     * message déjà envoyé au lieu de proposer à nouveau le formulaire de candidature.
+     */
+    public function findOne(int $studentId, int $offerId): array|false
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM candidature
+            WHERE id_etudiant = ? AND id_offre_filiere = ?
+        ");
+        $stmt->execute([$studentId, $offerId]);
+        return $stmt->fetch();
+    }
+
+    /**
      * Récupère toutes les candidatures d'un étudiant avec les détails des offres.
      */
     public function findByStudent(int $studentId): array

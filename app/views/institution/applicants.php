@@ -8,14 +8,15 @@
             <div>
                 <h1 class="text-2xl font-extrabold text-[#071d3b] sm:text-3xl">Candidatures reçues</h1>
             </div>
-
             <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-                <a href="index.php?route=institution/home" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
+                <a href="index.php?route=institution/home"
+                   class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
                     Retour
                 </a>
             </div>
         </div>
 
+        <!-- Onglets de filtrage par statut -->
         <div class="mt-6 flex flex-wrap gap-2">
             <?php
             $onglets = [
@@ -27,7 +28,8 @@
             foreach ($onglets as $val => $label):
                 $isActif = $statut === $val;
             ?>
-                <a href="index.php?route=institution/applications&statut=<?= $val ?>" class="rounded-lg px-4 py-2 text-sm font-semibold <?= $isActif ? 'bg-[#f1b456] text-[#071d3b]' : 'border border-slate-300 bg-white text-slate-600 hover:border-[#f1b456]' ?>">
+                <a href="index.php?route=institution/applications&statut=<?= $val ?>"
+                   class="rounded-lg px-4 py-2 text-sm font-semibold <?= $isActif ? 'bg-[#f1b456] text-[#071d3b]' : 'border border-slate-300 bg-white text-slate-600 hover:border-[#f1b456]' ?>">
                     <?= $label ?>
                 </a>
             <?php endforeach; ?>
@@ -41,35 +43,74 @@
             <div class="mt-6 space-y-3">
                 <?php foreach ($candidatures as $c): ?>
                     <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-[#f1b456]/60">
-                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                            <div>
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                            <div class="flex-1">
+                                <!-- Nom et prénom du candidat -->
                                 <h3 class="text-lg font-bold text-[#071d3b]">
                                     <?= htmlspecialchars($c['etudiant_prenom'] . ' ' . $c['etudiant_nom']) ?>
                                 </h3>
-                                <p class="text-sm font-medium text-slate-600"><?= htmlspecialchars($c['filiere_nom']) ?></p>
+                                <!-- Filière visée -->
+                                <p class="text-sm font-medium text-slate-600">
+                                    <?= htmlspecialchars($c['filiere_nom']) ?>
+                                </p>
+                                <!-- Badges : série bac et moyenne -->
                                 <div class="mt-1 flex flex-wrap gap-2 text-xs text-slate-500">
                                     <?php if ($c['serie']): ?>
-                                        <span class="rounded-full bg-slate-100 px-2 py-1">Série <?= htmlspecialchars($c['serie']) ?></span>
+                                        <span class="rounded-full bg-slate-100 px-2 py-1">
+                                            Série <?= htmlspecialchars($c['serie']) ?>
+                                        </span>
                                     <?php endif; ?>
                                     <?php if ($c['moyenne']): ?>
-                                        <span class="rounded-full bg-slate-100 px-2 py-1">Moyenne <?= htmlspecialchars($c['moyenne']) ?>/20</span>
+                                        <span class="rounded-full bg-slate-100 px-2 py-1">
+                                            Moyenne <?= htmlspecialchars($c['moyenne']) ?>/20
+                                        </span>
                                     <?php endif; ?>
                                 </div>
-                                <p class="mt-1 text-xs text-slate-500">Soumis le <?= date('d/m/Y', strtotime($c['date_candidature'])) ?></p>
+                                <!-- Date de soumission -->
+                                <p class="mt-1 text-xs text-slate-500">
+                                    Soumis le <?= date('d/m/Y', strtotime($c['date_candidature'])) ?>
+                                </p>
+
+                                <!--
+                                    NOUVEAU : message de motivation de l'étudiant.
+                                    Stocké dans la colonne `message` de la table `candidature`.
+                                    nl2br() convertit les sauts de ligne en <br> pour respecter
+                                    la mise en forme du texte saisi par l'étudiant.
+                                    htmlspecialchars() protège contre les injections XSS.
+                                -->
+                                <?php if (!empty($c['message'])): ?>
+                                    <div class="mt-3 rounded-lg border border-slate-100 bg-slate-50 px-4 py-3">
+                                        <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                            Lettre de motivation
+                                        </p>
+                                        <p class="text-sm leading-5 text-slate-700">
+                                            <?= nl2br(htmlspecialchars($c['message'])) ?>
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
-                            <div class="flex items-center gap-2">
+                            <!-- Boutons d'action (Accepter / Refuser) ou badge de statut -->
+                            <div class="flex shrink-0 items-center gap-2">
                                 <?php if ($c['statut'] === 'en_attente'): ?>
-                                    <form method="POST" action="index.php?route=institution/application/process" class="flex gap-2">
-                                        <input type="hidden" name="id_candidature" value="<?= $c['id_candidature'] ?>">
-                                        <button type="submit" name="statut" value="acceptee" class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">
+                                    <!-- Formulaire d'acceptation / refus -->
+                                    <!-- Un seul formulaire avec deux boutons submit de valeurs différentes -->
+                                    <form method="POST"
+                                          action="index.php?route=institution/application/process"
+                                          class="flex gap-2">
+                                        <input type="hidden" name="id_candidature"
+                                               value="<?= $c['id_candidature'] ?>">
+                                        <button type="submit" name="statut" value="acceptee"
+                                                class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">
                                             Accepter
                                         </button>
-                                        <button type="submit" name="statut" value="refusee" class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100">
+                                        <button type="submit" name="statut" value="refusee"
+                                                class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100">
                                             Refuser
                                         </button>
                                     </form>
                                 <?php else: ?>
+                                    <!-- Badge de statut final (candidature déjà traitée) -->
                                     <?php
                                     $badges = [
                                         'acceptee' => 'bg-emerald-100 text-emerald-800 border-emerald-200',

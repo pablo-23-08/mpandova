@@ -10,6 +10,8 @@ require_once __DIR__ . "/../models/User.php";
 
 require_once __DIR__ . "/../models/Application.php";
 require_once __DIR__ . "/../models/Program.php";
+require_once __DIR__ . "/../models/Outlet.php";
+require_once __DIR__ . "/../models/Consultation.php";
 
 class StudentController
 {
@@ -178,6 +180,57 @@ class StudentController
     }
 
     // ─────────────────────────────────────────────
+    // Fiche détaillée d'une filière
+    // ─────────────────────────────────────────────
+
+    /**
+     * Affiche la fiche détaillée d'une offre de filière : établissement,
+     * conditions d'accès, débouchés professionnels, et formulaire de candidature
+     * (avec message) ou statut de la candidature déjà envoyée.
+     * Accessible depuis le catalogue (student/institutions) et les recommandations
+     * (student/recommendations) en cliquant sur le nom d'une filière.
+     * ?route=student/offer/details&id=5
+     */
+    public function offerDetails(): void
+    {
+        check_role('etudiant');
+
+        $offerId = (int) ($_GET['id'] ?? 0);
+
+        $programModel = new Program($this->pdo);
+        $offer        = $offerId > 0 ? $programModel->findOfferDetailsForStudent($offerId) : false;
+
+        if (!$offer) {
+            set_flash('error', 'Filière introuvable.');
+            header("Location: index.php?route=student/institutions");
+            exit();
+        }
+
+        $student = $this->studentModel->findByUserId($_SESSION['id_utilisateur']);
+
+        // Enregistrer la consultation de cette offre par l'étudiant (table `consulter`)
+        $consultationModel = new Consultation($this->pdo);
+        $consultationModel->record($student['id_etudiant'], $offerId);
+
+        // Débouchés professionnels liés à la filière (tables `debouche` + `mener`)
+        $outletModel = new Outlet($this->pdo);
+        $outlets     = $outletModel->findByProgram((int) $offer['id_filiere']);
+
+        // Si l'étudiant a déjà postulé, on affiche le statut et le message envoyé
+        // plutôt que de proposer à nouveau le formulaire de candidature.
+        $applicationModel = new Application($this->pdo);
+        $application      = $applicationModel->findOne($student['id_etudiant'], $offerId);
+
+        $this->render('layouts/header');
+        $this->render('student/offer_details', [
+            'offre'       => $offer,
+            'debouches'   => $outlets,
+            'candidature' => $application,
+        ]);
+        $this->render('layouts/footer');
+    }
+
+    // ─────────────────────────────────────────────
     // Recommandations personnalisées
     // ─────────────────────────────────────────────
 
@@ -250,6 +303,8 @@ class StudentController
         }
 
         $offerId = (int) ($_POST['id_offre_filiere'] ?? 0);
+        // Message optionnel de l'étudiant, envoyé avec la candidature (table candidature.message)
+        $message = trim(htmlspecialchars($_POST['message'] ?? ''));
         $student = $this->studentModel->findByUserId($_SESSION['id_utilisateur']);
 
         if ($offerId <= 0 || !$student) {
@@ -268,7 +323,7 @@ class StudentController
         }
 
         try {
-            $applicationModel->submit($student['id_etudiant'], $offerId, null);
+            $applicationModel->submit($student['id_etudiant'], $offerId, $message !== '' ? $message : null);
             set_flash('success', 'Votre candidature a été envoyée avec succès !');
         } catch (PDOException $e) {
             error_log("Erreur soumission candidature : " . $e->getMessage());
