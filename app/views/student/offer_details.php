@@ -131,10 +131,15 @@
         
 
                 <?php if (!empty($candidature['message'])): ?>
-                    <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Votre message envoyé à l'établissement</p>
-                    <p class="mt-1 whitespace-pre-line rounded-lg bg-white p-3 text-sm text-slate-700 shadow-sm">
-                        <?= htmlspecialchars($candidature['message']) ?>
-                    </p>
+                    <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-xs font-bold uppercase tracking-wide text-slate-500">
+                            Votre message envoyé à l'établissement
+                        </p>
+
+                        <p class="mt-2 text-sm leading-relaxed text-slate-700">
+                            <?= nl2br(htmlspecialchars($candidature['message'])) ?>
+                        </p>
+                    </div>
                 <?php endif; ?>
 
                 <div class="mt-4 flex w-full justify-end">
