@@ -51,7 +51,7 @@ function check_auth(): void
 function check_role(string $role): void
 {
     check_auth(); // Appelle d'abord check_auth() pour vérifier la connexion
-    if ($_SESSION['role'] !== $role) {
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== $role) {
         header("Location: index.php");
         exit();
     }
@@ -90,13 +90,14 @@ function redirect_if_logged(): void
     $stmt = $pdo->prepare('UPDATE session SET initial = :time WHERE id_session = :sid');
     $stmt->execute([':time' => time(), ':sid' => session_id()]);
 
+    // Routes refactorisées : utiliser les nouvelles routes en anglais (convention MVC)
     $destinations = [
-        'etudiant'      => '?route=etudiant/accueil',
-        'etablissement' => '?route=etablissement/accueil',
+        'etudiant'      => 'index.php?route=student/home',
+        'etablissement' => 'index.php?route=institution/home',
     ];
 
     $role = $_SESSION['role'] ?? '';
-    $url  = $destinations[$role] ?? '?route=home';
+    $url  = $destinations[$role] ?? 'index.php?route=home';
 
     header("Location: $url");
     exit();
