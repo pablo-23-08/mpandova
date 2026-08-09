@@ -13,6 +13,7 @@ require_once __DIR__ . "/app/controllers/AuthController.php";
 require_once __DIR__ . "/app/controllers/StudentController.php";
 require_once __DIR__ . "/app/controllers/InstitutionController.php";
 require_once __DIR__ . "/app/controllers/ProgramController.php";
+require_once __DIR__ . "/app/controllers/OutletController.php";
 
 // Lecture du paramètre ?route=... dans l'URL, "home" par défaut
 $route = filter_input(INPUT_GET, 'route', FILTER_SANITIZE_SPECIAL_CHARS) ?: 'home';
@@ -45,6 +46,10 @@ $routes = [
     'institution/program/create'      => ['ProgramController', 'create'],
     'institution/program/edit'        => ['ProgramController', 'edit'],
     'institution/program/delete'      => ['ProgramController', 'delete'],
+    'institution/program/outlets'         => ['OutletController', 'index'],
+    'institution/program/outlets/store'   => ['OutletController', 'store'],
+    'institution/program/outlets/edit'    => ['OutletController', 'edit'],
+    'institution/program/outlets/delete'  => ['OutletController', 'delete'],
     'institution/applications'        => ['InstitutionController', 'applications'],
     'institution/application/process' => ['InstitutionController', 'processApplication'],
 ];

@@ -15,12 +15,24 @@ $actionUrl = ($mode === 'modifier')
             </div>
 
             <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+                <?php if ($mode === 'modifier'): ?>
+                    <a href="index.php?route=institution/program/outlets&id=<?= $offre['id_offre_filiere'] ?>" class="rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-800 hover:bg-sky-100">
+                        Gérer les débouchés
+                    </a>
+                <?php endif; ?>
                 <a href="index.php?route=institution/programs" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-[#071d3b] hover:border-[#f1b456]">
                     Retour
                 </a>
             </div>
             
         </div>
+
+        <?php if ($mode !== 'modifier'): ?>
+            <p class="mt-4 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800">
+                Une fois la filière ajoutée, vous pourrez renseigner ses débouchés professionnels
+                (nom, description et niveau d'étude nécessaire) depuis le bouton « Débouchés ».
+            </p>
+        <?php endif; ?>
 
         <?php if (empty($filieres)): ?>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-6 text-slate-600">

@@ -53,6 +53,9 @@
                             </div>
 
                             <div class="flex gap-2">
+                                <a href="index.php?route=institution/program/outlets&id=<?= $offre['id_offre_filiere'] ?>" class="rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-800 hover:bg-sky-100">
+                                    Débouchés
+                                </a>
                                 <a href="index.php?route=institution/program/edit&id=<?= $offre['id_offre_filiere'] ?>" class="rounded-lg border border-[#f1b456]/50 bg-[#f1b456]/15 px-4 py-2 text-sm font-semibold text-[#8a5a10] hover:bg-[#f1b456]/25">
                                     Modifier
                                 </a>
