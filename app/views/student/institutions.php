@@ -55,7 +55,7 @@
         </form>
 
         <p class="mt-5 text-sm text-slate-600">
-            <?= count($offres) ?> <?=(count($offres) > 1) ? 'offres trouvées' : 'offre trouvée' ?>
+            <?= count($offres) ?> <?= (count($offres) > 1) ? 'offres trouvées' : 'offre trouvée' ?>
             <?= !empty($recherche) ? 'pour « ' . htmlspecialchars($recherche) . ' »' : '' ?>
         </p>
 

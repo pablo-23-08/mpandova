@@ -46,7 +46,7 @@
         <?php else: ?>
 
             <p class="mt-6 text-sm text-slate-600">
-                <?= count($recommandations) ?> offre(s) compatible(s) trouvée(s),
+                <?= count($recommandations) ?> <?= (count($recommandations) > 1) ? 'offres compatibles trouvées' : 'offre compatible trouvée' ?>,
                 triées par score de compatibilité.
             </p>
 
