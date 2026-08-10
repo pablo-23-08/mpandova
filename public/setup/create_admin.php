@@ -7,16 +7,10 @@
 // Via terminal   : php setup/create_admin.php
 // ============================================================
 
-// Sécurité minimale : autorisé uniquement depuis localhost ou CLI
-if (PHP_SAPI !== 'cli'
-    && !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)
-) {
-    http_response_code(403);
-    die("Accès refusé. Ce script ne s'exécute que depuis localhost.");
-}
 
 // Charger la connexion à la base de données (variable $pdo)
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../../config/database.php';
+
 
 // ── Paramètres du compte admin (modifiez si besoin) ──────────
 $email    = 'admin@mpandova.mg';
